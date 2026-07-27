@@ -166,8 +166,8 @@
 
       <!-- Tombol Absen -->
       <div id="tombol-absen-box" class="grid grid-cols-2 gap-3 mb-6">
-        <button onclick="siapkanAbsen('Masuk')" class="flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm"><i class="fa-solid fa-right-to-bracket"></i> MASUK</button>
-        <button onclick="siapkanAbsen('Pulang')" class="flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm"><i class="fa-solid fa-person-walking-arrow-right"></i> PULANG</button>
+        <button id="btn-masuk" class="flex items-center justify-center gap-2 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm transition-all"></button>
+        <button id="btn-pulang" class="flex items-center justify-center gap-2 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm transition-all"></button>
       </div>
 
       <!-- Form Izin Dropdown -->
@@ -188,22 +188,22 @@
 
   <script>
     // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
-    const API_URL = "https://script.google.com/macros/s/AKfycbwBRnvCpPJNeNI1UcDWBxM44V3apqCMQbu_aiE2K5-vIGbz7tAxihkU8OB3ylyv7UZPoA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbziLlQvgJbc2rbxi2BS92u6Z6kVVhfCyBShy3SShaSyCtimKQavGHLQ0NmhBEk8g4vvRQ/exec";
 
     let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
     let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
     let cachedDataSiswa = [], cachedDataKBTK = [], cachedDataSD = [], cachedDataSMP = [], currentStartDate = '', currentEndDate = '';
+    
+    // Variabel Status Absen Hari Ini
+    let statusSudahMasuk = false;
+    let statusSudahPulang = false;
 
-    // ================= SOLUSI ANTI CORS =================
-    // Menerapkan request POST standar tanpa preflight header.
     async function callAPI(payload) {
       try {
         let response = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8",
-          }
+          headers: { "Content-Type": "text/plain;charset=utf-8" }
         });
         return await response.json();
       } catch (err) {
@@ -212,7 +212,6 @@
       }
     }
 
-    // ================= FUNGSI UI & ANIMASI =================
     function toggleFormIzin() {
       document.getElementById('izin-content').classList.toggle('hidden');
       document.getElementById('izin-icon').classList.toggle('rotate-180');
@@ -275,6 +274,34 @@
       document.getElementById(pageId).classList.remove('hidden');
     }
 
+    // ================= PENGATURAN TOMBOL ABSEN =================
+    function renderTombolAbsen() {
+      const btnMasuk = document.getElementById('btn-masuk');
+      const btnPulang = document.getElementById('btn-pulang');
+
+      // Tombol Masuk
+      if (statusSudahMasuk) {
+        btnMasuk.onclick = () => alert("Anda sudah melakukan absen MASUK hari ini!");
+        btnMasuk.className = "flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl shadow-sm font-bold text-sm cursor-not-allowed";
+        btnMasuk.innerHTML = `<i class="fa-solid fa-check"></i> SUDAH MASUK`;
+      } else {
+        btnMasuk.onclick = () => siapkanAbsen('Masuk');
+        btnMasuk.className = "flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm hover:shadow-lg hover:-translate-y-0.5 transition-all";
+        btnMasuk.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> MASUK`;
+      }
+
+      // Tombol Pulang
+      if (statusSudahPulang) {
+        btnPulang.onclick = () => alert("Anda sudah melakukan absen PULANG hari ini!");
+        btnPulang.className = "flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl shadow-sm font-bold text-sm cursor-not-allowed";
+        btnPulang.innerHTML = `<i class="fa-solid fa-check-double"></i> SUDAH PULANG`;
+      } else {
+        btnPulang.onclick = () => siapkanAbsen('Pulang');
+        btnPulang.className = "flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm hover:shadow-lg hover:-translate-y-0.5 transition-all";
+        btnPulang.innerHTML = `<i class="fa-solid fa-person-walking-arrow-right"></i> PULANG`;
+      }
+    }
+
     // ================= FUNGSI AKUN & OTENTIKASI =================
     async function doRegister() {
       const nama = document.getElementById('reg-nama').value;
@@ -307,11 +334,16 @@
         currentUser = res.nama;
         currentRole = res.role;
         
+        // Simpan status apakah hari ini sudah absen masuk/pulang
+        statusSudahMasuk = res.sudahMasuk;
+        statusSudahPulang = res.sudahPulang;
+        
         if(currentRole === 'Admin') {
           showPage('admin-page');
           initAdminGPS();
         } else {
           setGreeting();
+          renderTombolAbsen(); // Terapkan status tombol saat ini
           showPage('dashboard-page');
           initCekGPS();
         }
@@ -328,6 +360,7 @@
 
     function logout() {
       currentUser = ''; currentRole = '';
+      statusSudahMasuk = false; statusSudahPulang = false;
       document.getElementById('log-pass').value = localStorage.getItem('dorkas_pass') || '';
       showPage('login-page');
     }
@@ -479,6 +512,12 @@
 
     function siapkanAbsen(tipe) {
       if(!isInRadius) return alert("Anda di luar radius 150 meter dari sekolah!");
+      
+      // Jika mencoba absen pulang tapi belum absen masuk
+      if(tipe === 'Pulang' && !statusSudahMasuk) {
+        return alert("Anda belum melakukan absen MASUK hari ini!");
+      }
+
       tipeAbsenSekarang = tipe;
       document.getElementById('kamera-instruksi').innerText = `Absen ${tipe.toUpperCase()} - Ambil foto selfie Anda`;
       document.getElementById('tombol-absen-box').classList.add('hidden');
@@ -522,6 +561,14 @@
       });
 
       alert(res.message);
+
+      // Jika berhasil, update status dan perbarui tampilan tombol
+      if (res.success) {
+        if (tipeAbsenSekarang === 'Masuk') statusSudahMasuk = true;
+        if (tipeAbsenSekarang === 'Pulang') statusSudahPulang = true;
+        renderTombolAbsen();
+      }
+
       fotoBase64Data = '';
       initCekGPS(); 
     }
@@ -539,6 +586,12 @@
       });
 
       alert(res.message);
+      
+      if(res.success) {
+        statusSudahMasuk = true;
+        renderTombolAbsen();
+      }
+
       document.getElementById('ket-izin').value = '';
       toggleFormIzin();
     }
