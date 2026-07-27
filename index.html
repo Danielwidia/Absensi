@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <base target="_top">
-  <!-- Tailwind CSS -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Absensi - Sekolah Kristen Dorkas</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SheetJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   
   <style>
@@ -15,56 +14,22 @@
     .table-container::-webkit-scrollbar-track, .tab-nav::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
     .table-container::-webkit-scrollbar-thumb, .tab-nav::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     
-    /* Efek Gradasi Transparan di Bagian Atas Kartu Utama */
     .glass-gradient-top {
       background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 35%, rgba(255, 255, 255, 0.98) 100%);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
     
-    @keyframes floatSlow {
-      0% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-18px) scale(1.03); }
-      100% { transform: translateY(0px) scale(1); }
-    }
+    @keyframes floatSlow { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-18px) scale(1.03); } 100% { transform: translateY(0px) scale(1); } }
     .animate-float-slow { animation: floatSlow 7s ease-in-out infinite; }
-
-    @keyframes floatCloud {
-      0% { transform: translateX(0px); }
-      50% { transform: translateX(25px); }
-      100% { transform: translateX(0px); }
-    }
+    @keyframes floatCloud { 0% { transform: translateX(0px); } 50% { transform: translateX(25px); } 100% { transform: translateX(0px); } }
     .animate-cloud { animation: floatCloud 12s ease-in-out infinite; }
-    
-    @keyframes realisticGlow {
-      0%, 100% { box-shadow: 0 0 40px 10px rgba(255, 204, 0, 0.4), 0 0 80px 30px rgba(255, 102, 0, 0.2); }
-      50% { box-shadow: 0 0 60px 20px rgba(255, 221, 0, 0.6), 0 0 110px 40px rgba(255, 136, 0, 0.3); }
-    }
-    .realistic-sun {
-      background: radial-gradient(circle at 30% 30%, #fff700, #ff8800);
-      animation: realisticGlow 4s ease-in-out infinite, floatSlow 6s ease-in-out infinite;
-    }
-
-    @keyframes realisticMoon {
-      0%, 100% { box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.8), 0 0 35px 10px rgba(200,220,255,0.3); }
-      50% { box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.9), 0 0 50px 18px rgba(200,220,255,0.5); }
-    }
-    .realistic-moon {
-      background: radial-gradient(circle at 35% 35%, #ffffff, #cfd8dc);
-      animation: realisticMoon 5s ease-in-out infinite, floatSlow 8s ease-in-out infinite;
-    }
-
-    .realistic-cloud {
-      background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(240,244,248,0.7));
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      border-radius: 50px;
-    }
-
-    @keyframes starTwinkle {
-      0%, 100% { opacity: 0.2; transform: scale(0.7); filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)); }
-      50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)); }
-    }
+    @keyframes realisticGlow { 0%, 100% { box-shadow: 0 0 40px 10px rgba(255, 204, 0, 0.4), 0 0 80px 30px rgba(255, 102, 0, 0.2); } 50% { box-shadow: 0 0 60px 20px rgba(255, 221, 0, 0.6), 0 0 110px 40px rgba(255, 136, 0, 0.3); } }
+    .realistic-sun { background: radial-gradient(circle at 30% 30%, #fff700, #ff8800); animation: realisticGlow 4s ease-in-out infinite, floatSlow 6s ease-in-out infinite; }
+    @keyframes realisticMoon { 0%, 100% { box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.8), 0 0 35px 10px rgba(200,220,255,0.3); } 50% { box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.9), 0 0 50px 18px rgba(200,220,255,0.5); } }
+    .realistic-moon { background: radial-gradient(circle at 35% 35%, #ffffff, #cfd8dc); animation: realisticMoon 5s ease-in-out infinite, floatSlow 8s ease-in-out infinite; }
+    .realistic-cloud { background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(240,244,248,0.7)); backdrop-filter: blur(8px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-radius: 50px; }
+    @keyframes starTwinkle { 0%, 100% { opacity: 0.2; transform: scale(0.7); filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)); } 50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)); } }
     .realistic-star { animation: starTwinkle 3s ease-in-out infinite; }
   </style>
 </head>
@@ -73,9 +38,7 @@
   
   <div id="theme-decorations" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
   
-  <!-- Ditambahkan class glass-gradient-top untuk efek gradasi transparan di bagian atas -->
   <div class="max-w-md mx-auto p-8 glass-gradient-top rounded-3xl shadow-2xl relative z-10 overflow-hidden transition-all duration-500" id="app-container">
-    
     <div class="absolute -top-16 -right-16 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-2xl pointer-events-none"></div>
     <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-orange-100 rounded-full opacity-50 blur-2xl pointer-events-none"></div>
 
@@ -91,29 +54,20 @@
     <div id="login-page" class="relative z-10">
       <div class="space-y-4">
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fa-solid fa-user text-gray-400"></i>
-          </div>
-          <input type="text" id="log-user" placeholder="Username" class="w-full pl-10 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-400"></i></div>
+          <input type="text" id="log-user" placeholder="Username" class="w-full pl-10 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
-        
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="fa-solid fa-lock text-gray-400"></i>
-          </div>
-          <input type="password" id="log-pass" placeholder="Password" class="w-full pl-10 pr-10 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
-          <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility()">
-            <i id="toggle-icon" class="fa-solid fa-eye-slash text-gray-400 hover:text-gray-600 transition-colors"></i>
-          </div>
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
+          <input type="password" id="log-pass" placeholder="Password" class="w-full pl-10 pr-10 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility()"><i id="toggle-icon" class="fa-solid fa-eye-slash text-gray-400 hover:text-gray-600"></i></div>
         </div>
-
         <div class="flex items-center justify-between mt-2">
-          <label class="flex items-center text-sm text-gray-600 cursor-pointer hover:text-blue-600 transition-colors">
+          <label class="flex items-center text-sm text-gray-600 cursor-pointer hover:text-blue-600">
             <input type="checkbox" id="remember-me" class="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
             <span class="font-medium">Ingat saya di perangkat ini</span>
           </label>
         </div>
-
         <button onclick="doLogin()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mt-2">
           Masuk <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
@@ -124,64 +78,45 @@
     <!-- ================= REGISTER PAGE ================= -->
     <div id="register-page" class="hidden relative z-10">
       <div class="space-y-3">
-        <input type="text" id="reg-nama" placeholder="Nama Lengkap" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-        <input type="text" id="reg-user" placeholder="Username" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-        <input type="password" id="reg-pass" placeholder="Password" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-        <select id="reg-role" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-600">
+        <input type="text" id="reg-nama" placeholder="Nama Lengkap" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none">
+        <input type="text" id="reg-user" placeholder="Username" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none">
+        <input type="password" id="reg-pass" placeholder="Password" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none">
+        <select id="reg-role" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none text-gray-600">
           <option value="Siswa">Siswa</option>
           <option value="Guru/Karyawan KB-TK">Guru/Karyawan KB-TK</option>
           <option value="Guru/Karyawan SD">Guru/Karyawan SD</option>
           <option value="Guru/Karyawan SMP">Guru/Karyawan SMP</option>
         </select>
-        <button onclick="doRegister()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mt-2">
-          Daftar Akun Baru
-        </button>
-        <button onclick="showPage('login-page')" class="w-full bg-white/80 text-gray-700 font-semibold py-3 rounded-xl hover:bg-white transition-all">Kembali ke Login</button>
+        <button onclick="doRegister()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg mt-2">Daftar Akun Baru</button>
+        <button onclick="showPage('login-page')" class="w-full bg-white/80 text-gray-700 font-semibold py-3 rounded-xl hover:bg-white">Kembali ke Login</button>
       </div>
     </div>
     
     <!-- ================= ADMIN PAGE ================= -->
     <div id="admin-page" class="hidden relative z-10 w-full">
       <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
-          <i class="fa-solid fa-user-shield text-xl"></i>
-        </div>
-        <div>
-          <h2 class="text-lg font-bold text-gray-800">Panel Admin</h2>
-          <p class="text-xs text-gray-500">Pengaturan & Laporan Absensi</p>
-        </div>
+        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600"><i class="fa-solid fa-user-shield text-xl"></i></div>
+        <div><h2 class="text-lg font-bold text-gray-800">Panel Admin</h2><p class="text-xs text-gray-500">Pengaturan & Laporan Absensi</p></div>
       </div>
       
       <div class="bg-indigo-50/95 p-5 rounded-2xl border border-indigo-100 mb-4">
-        <h3 class="font-bold text-indigo-800 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-file-invoice"></i> Filter Data Laporan
-        </h3>
+        <h3 class="font-bold text-indigo-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-file-invoice"></i> Filter Data Laporan</h3>
         <div class="grid grid-cols-2 gap-3 mb-4">
-          <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Dari Tanggal</label>
-            <input type="date" id="filter-start" class="w-full mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700">
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Sampai Tanggal</label>
-            <input type="date" id="filter-end" class="w-full mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700">
-          </div>
+          <div><label class="text-xs font-semibold text-gray-600 uppercase">Dari Tanggal</label><input type="date" id="filter-start" class="w-full mt-1 px-3 py-2 bg-white border rounded-lg text-sm"></div>
+          <div><label class="text-xs font-semibold text-gray-600 uppercase">Sampai Tanggal</label><input type="date" id="filter-end" class="w-full mt-1 px-3 py-2 bg-white border rounded-lg text-sm"></div>
         </div>
         <div class="flex gap-2">
-          <button id="btn-lihat" onclick="lihatData()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-xl transition-all shadow-md text-sm">
-            <i class="fa-solid fa-eye mr-1"></i> Tampilkan
-          </button>
-          <button id="btn-download" onclick="downloadExcel()" class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition-all shadow-md text-sm hidden">
-            <i class="fa-solid fa-file-excel mr-1"></i> Unduh Excel
-          </button>
+          <button id="btn-lihat" onclick="lihatData()" class="w-1/2 bg-indigo-600 text-white font-semibold py-2 rounded-xl text-sm shadow-md"><i class="fa-solid fa-eye mr-1"></i> Tampilkan</button>
+          <button id="btn-download" onclick="downloadExcel()" class="w-1/2 bg-green-600 text-white font-semibold py-2 rounded-xl text-sm shadow-md hidden"><i class="fa-solid fa-file-excel mr-1"></i> Unduh Excel</button>
         </div>
       </div>
 
       <div id="data-preview-section" class="hidden mb-6 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-        <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto whitespace-nowrap tab-nav">
+        <div class="flex border-b bg-gray-50 overflow-x-auto whitespace-nowrap tab-nav">
           <button id="tab-btn-siswa" onclick="switchTab('siswa')" class="px-5 py-3 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white">Siswa</button>
-          <button id="tab-btn-kbtk" onclick="switchTab('kbtk')" class="px-5 py-3 text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Guru KB-TK</button>
-          <button id="tab-btn-sd" onclick="switchTab('sd')" class="px-5 py-3 text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Guru SD</button>
-          <button id="tab-btn-smp" onclick="switchTab('smp')" class="px-5 py-3 text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Guru SMP</button>
+          <button id="tab-btn-kbtk" onclick="switchTab('kbtk')" class="px-5 py-3 text-sm font-bold text-gray-500">Guru KB-TK</button>
+          <button id="tab-btn-sd" onclick="switchTab('sd')" class="px-5 py-3 text-sm font-bold text-gray-500">Guru SD</button>
+          <button id="tab-btn-smp" onclick="switchTab('smp')" class="px-5 py-3 text-sm font-bold text-gray-500">Guru SMP</button>
         </div>
         <div class="p-4 table-container overflow-x-auto">
           <div id="tabel-siswa" class="min-w-max"></div>
@@ -192,21 +127,14 @@
       </div>
 
       <div class="bg-blue-50/95 p-5 rounded-2xl border border-blue-100 mb-6">
-        <h3 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-map-location-dot"></i> Koordinat Sekolah
-        </h3>
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Latitude</label>
-        <input type="text" id="admin-lat" placeholder="-6.200000" class="w-full mt-1 mb-3 px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Longitude</label>
-        <input type="text" id="admin-lon" placeholder="106.816666" class="w-full mt-1 mb-4 px-3 py-2 bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-        <button onclick="simpanGPS()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-all shadow-md">
-          <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Koordinat
-        </button>
+        <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-map-location-dot"></i> Koordinat Sekolah</h3>
+        <label class="text-xs font-semibold text-gray-600 uppercase">Latitude</label>
+        <input type="text" id="admin-lat" class="w-full mt-1 mb-3 px-3 py-2 bg-white border rounded-lg text-sm">
+        <label class="text-xs font-semibold text-gray-600 uppercase">Longitude</label>
+        <input type="text" id="admin-lon" class="w-full mt-1 mb-4 px-3 py-2 bg-white border rounded-lg text-sm">
+        <button onclick="simpanGPS()" class="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl shadow-md"><i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Koordinat</button>
       </div>
-      
-      <button onclick="logout()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl hover:bg-red-100 transition-all border border-red-100">
-        <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
-      </button>
+      <button onclick="logout()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-100"><i class="fa-solid fa-right-from-bracket mr-2"></i> Logout</button>
     </div>
 
     <!-- ================= DASHBOARD PAGE (ABSENSI) ================= -->
@@ -216,15 +144,11 @@
           <h2 id="greeting" class="text-xl font-extrabold text-gray-800"></h2>
           <p class="text-sm text-gray-500">Siap untuk absen hari ini?</p>
         </div>
-        <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-inner">
-          <i class="fa-solid fa-user-astronaut text-xl"></i>
-        </div>
+        <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-inner"><i class="fa-solid fa-user-astronaut text-xl"></i></div>
       </div>
       
       <div id="gps-box" class="bg-blue-50/95 border border-blue-100 p-3 rounded-xl flex items-center gap-3 mb-6 transition-all duration-300">
-        <div id="gps-icon-bg" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0">
-          <i id="gps-icon" class="fa-solid fa-location-crosshairs animate-pulse-fast"></i>
-        </div>
+        <div id="gps-icon-bg" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0"><i id="gps-icon" class="fa-solid fa-location-crosshairs animate-pulse-fast"></i></div>
         <span id="gps-status" class="text-sm font-semibold text-blue-700 leading-tight">Mencari lokasi GPS Anda...</span>
       </div>
 
@@ -232,163 +156,87 @@
       <div id="camera-box" class="mb-6 hidden animate-fade-in">
         <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-2xl p-6 text-center mb-3">
           <p class="text-sm font-semibold text-indigo-800 mb-3" id="kamera-instruksi">Silakan ambil foto selfie Anda</p>
-          
           <input type="file" id="foto-input" accept="image/*" capture="user" class="hidden" onchange="previewFoto(event)">
-          
-          <label for="foto-input" class="cursor-pointer inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all">
-            <i class="fa-solid fa-camera"></i> Buka Kamera HP
-          </label>
-          
+          <label for="foto-input" class="cursor-pointer inline-flex items-center gap-2 bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md"><i class="fa-solid fa-camera"></i> Buka Kamera HP</label>
           <img id="foto-preview" class="mt-4 mx-auto max-h-56 rounded-xl shadow-md hidden" src="" alt="Preview">
         </div>
-        
-        <button id="btn-snap" onclick="simpanAbsen()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold p-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all hidden flex items-center justify-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up text-xl"></i> Simpan Absen & Foto
-        </button>
-        <button onclick="batalAbsen()" class="w-full mt-3 bg-white border border-gray-300 text-gray-700 font-bold p-3 rounded-xl hover:bg-gray-50 transition-all">Batal Absen</button>
+        <button id="btn-snap" onclick="simpanAbsen()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold p-4 rounded-xl shadow-lg hidden flex items-center justify-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-xl"></i> Simpan Absen & Foto</button>
+        <button onclick="batalAbsen()" class="w-full mt-3 bg-white border border-gray-300 text-gray-700 font-bold p-3 rounded-xl hover:bg-gray-50">Batal Absen</button>
       </div>
 
       <!-- Tombol Absen -->
       <div id="tombol-absen-box" class="grid grid-cols-2 gap-3 mb-6">
-        <button onclick="siapkanAbsen('Masuk')" class="group relative flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all overflow-hidden">
-          <div class="absolute top-0 right-0 -mt-2 -mr-2 w-10 h-10 bg-white opacity-10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-          <i class="fa-solid fa-right-to-bracket text-lg"></i>
-          <span class="font-bold tracking-wide text-sm">MASUK</span>
-        </button>
-        <button onclick="siapkanAbsen('Pulang')" class="group relative flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all overflow-hidden">
-          <div class="absolute top-0 right-0 -mt-2 -mr-2 w-10 h-10 bg-white opacity-10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-          <i class="fa-solid fa-person-walking-arrow-right text-lg"></i>
-          <span class="font-bold tracking-wide text-sm">PULANG</span>
-        </button>
+        <button onclick="siapkanAbsen('Masuk')" class="flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm"><i class="fa-solid fa-right-to-bracket"></i> MASUK</button>
+        <button onclick="siapkanAbsen('Pulang')" class="flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm"><i class="fa-solid fa-person-walking-arrow-right"></i> PULANG</button>
       </div>
 
       <!-- Form Izin Dropdown -->
-      <div class="bg-gray-50/90 rounded-2xl border border-gray-100 mb-6 overflow-hidden transition-all shadow-sm">
-        <button onclick="toggleFormIzin()" class="w-full p-4 flex items-center justify-between bg-gray-100/90 hover:bg-gray-200 text-gray-700 font-bold text-sm transition-all">
-          <span class="flex items-center gap-2">
-            <i class="fa-solid fa-envelope-open-text text-gray-500"></i> Form Izin
-          </span>
+      <div class="bg-gray-50/90 rounded-2xl border border-gray-100 mb-6 overflow-hidden shadow-sm">
+        <button onclick="toggleFormIzin()" class="w-full p-4 flex items-center justify-between bg-gray-100/90 text-gray-700 font-bold text-sm">
+          <span class="flex items-center gap-2"><i class="fa-solid fa-envelope-open-text text-gray-500"></i> Form Izin</span>
           <i id="izin-icon" class="fa-solid fa-chevron-down transition-transform"></i>
         </button>
-        
         <div id="izin-content" class="p-5 hidden border-t border-gray-100 bg-white/95 space-y-3">
-          <input type="text" id="ket-izin" placeholder="Alasan (Sakit / Keperluan lain)" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-400 outline-none text-sm transition-all shadow-sm">
-          <button onclick="kirimIzin()" class="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 rounded-xl transition-all shadow-md">
-            <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin
-          </button>
+          <input type="text" id="ket-izin" placeholder="Alasan (Sakit / Keperluan lain)" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm shadow-sm">
+          <button onclick="kirimIzin()" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl shadow-md"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin</button>
         </div>
       </div>
 
-      <button onclick="logout()" class="w-full mt-2 bg-red-50 text-red-600 font-bold py-3 rounded-xl hover:bg-red-100 transition-all border border-red-100">
-        <i class="fa-solid fa-power-off mr-2"></i> Keluar
-      </button>
+      <button onclick="logout()" class="w-full mt-2 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-100"><i class="fa-solid fa-power-off mr-2"></i> Keluar</button>
     </div>
   </div>
 
   <script>
-    // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
-    const API_URL = "https://script.google.com/macros/s/AKfycbzpZ0_8gex9KlyKFuRF1COEwQz8aonkdrEZMFtX_K7W_EQ0RHRP6uwahWTOR7csrOltkA/exec";
+    // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
+    const API_URL = "https://script.google.com/macros/s/AKfycbwBRnvCpPJNeNI1UcDWBxM44V3apqCMQbu_aiE2K5-vIGbz7tAxihkU8OB3ylyv7UZPoA/exec";
 
-    let currentUser = '';
-    let currentRole = '';
-    let tipeAbsenSekarang = ''; 
-    let latSekolah = 0; 
-    let lonSekolah = 0;
-    let userLat, userLon;
-    let isInRadius = false;
-    let fotoBase64Data = '';
-    
-    let cachedDataSiswa = [];
-    let cachedDataKBTK = [];
-    let cachedDataSD = [];
-    let cachedDataSMP = [];
-    let currentStartDate = '';
-    let currentEndDate = '';
+    let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
+    let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
+    let cachedDataSiswa = [], cachedDataKBTK = [], cachedDataSD = [], cachedDataSMP = [], currentStartDate = '', currentEndDate = '';
 
-async function callAPI(payload) {
-      return new Promise((resolve) => {
-        // Membuat form tersembunyi agar lolos dari blokir CORS browser
-        const iframeName = 'hidden_iframe_' + Date.now();
-        const iframe = document.createElement('iframe');
-        iframe.name = iframeName;
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = API_URL;
-        form.target = iframeName;
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'data';
-        input.value = JSON.stringify(payload);
-        form.appendChild(input);
-
-        document.body.appendChild(form);
-        form.submit();
-
-        // Membersihkan elemen setelah dikirim
-        setTimeout(() => {
-          form.remove();
-          iframe.remove();
-          resolve({ success: true, message: "Data berhasil dikirim ke server!" });
-        }, 1000);
-      });
+    // ================= SOLUSI ANTI CORS =================
+    // Menerapkan request POST standar tanpa preflight header.
+    async function callAPI(payload) {
+      try {
+        let response = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          }
+        });
+        return await response.json();
+      } catch (err) {
+        alert("Koneksi ke server gagal. Error: " + err.message);
+        return { success: false, message: err.message };
+      }
     }
 
+    // ================= FUNGSI UI & ANIMASI =================
     function toggleFormIzin() {
-      const content = document.getElementById('izin-content');
-      const icon = document.getElementById('izin-icon');
-      if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        icon.classList.add('rotate-180');
-      } else {
-        content.classList.add('hidden');
-        icon.classList.remove('rotate-180');
-      }
+      document.getElementById('izin-content').classList.toggle('hidden');
+      document.getElementById('izin-icon').classList.toggle('rotate-180');
     }
 
     function setAtmosphere() {
       const hour = new Date().getHours();
       const body = document.getElementById('main-body');
       const decor = document.getElementById('theme-decorations');
-      
-      let bgClass = '';
-      let decorHtml = '';
+      let bgClass = '', decorHtml = '';
       
       if (hour >= 4 && hour < 11) {
         bgClass = 'bg-gradient-to-br from-sky-200 via-blue-200 to-indigo-200';
-        decorHtml = `
-          <div class="absolute top-10 left-12 w-20 h-20 rounded-full realistic-sun"></div>
-          <div class="absolute top-16 right-16 w-36 h-12 realistic-cloud animate-cloud opacity-80"></div>
-          <div class="absolute top-36 left-28 w-24 h-8 realistic-cloud animate-cloud opacity-60" style="animation-delay: 4s;"></div>
-        `;
+        decorHtml = `<div class="absolute top-10 left-12 w-20 h-20 rounded-full realistic-sun"></div><div class="absolute top-16 right-16 w-36 h-12 realistic-cloud animate-cloud opacity-80"></div><div class="absolute top-36 left-28 w-24 h-8 realistic-cloud animate-cloud opacity-60" style="animation-delay: 4s;"></div>`;
       } else if (hour >= 11 && hour < 15) {
         bgClass = 'bg-gradient-to-br from-blue-300 via-sky-300 to-cyan-300';
-        decorHtml = `
-          <div class="absolute top-8 right-16 w-24 h-24 rounded-full realistic-sun"></div>
-          <div class="absolute top-12 left-10 w-40 h-14 realistic-cloud animate-cloud opacity-90"></div>
-          <div class="absolute top-48 right-8 w-32 h-10 realistic-cloud animate-cloud opacity-70" style="animation-delay: 3s;"></div>
-        `;
+        decorHtml = `<div class="absolute top-8 right-16 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-12 left-10 w-40 h-14 realistic-cloud animate-cloud opacity-90"></div><div class="absolute top-48 right-8 w-32 h-10 realistic-cloud animate-cloud opacity-70" style="animation-delay: 3s;"></div>`;
       } else if (hour >= 15 && hour < 18) {
         bgClass = 'bg-gradient-to-br from-orange-200 via-amber-300 to-rose-300';
-        decorHtml = `
-          <div class="absolute top-12 left-16 w-24 h-24 rounded-full realistic-sun"></div>
-          <div class="absolute top-24 right-10 w-44 h-14 realistic-cloud animate-cloud opacity-60"></div>
-        `;
+        decorHtml = `<div class="absolute top-12 left-16 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-24 right-10 w-44 h-14 realistic-cloud animate-cloud opacity-60"></div>`;
       } else {
         bgClass = 'bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950';
-        decorHtml = `
-          <div class="absolute top-10 right-16 w-20 h-20 rounded-full realistic-moon"></div>
-          <div class="absolute top-12 left-12 w-1.5 h-1.5 bg-white rounded-full realistic-star"></div>
-          <div class="absolute top-24 left-36 w-2 h-2 bg-white rounded-full realistic-star" style="animation-delay: 1s;"></div>
-          <div class="absolute top-8 left-60 w-1.5 h-1.5 bg-white rounded-full realistic-star" style="animation-delay: 2s;"></div>
-          <div class="absolute top-44 right-40 w-2 h-2 bg-white rounded-full realistic-star" style="animation-delay: 0.5s;"></div>
-          <div class="absolute top-32 left-20 w-1 h-1 bg-white rounded-full realistic-star" style="animation-delay: 1.5s;"></div>
-        `;
+        decorHtml = `<div class="absolute top-10 right-16 w-20 h-20 rounded-full realistic-moon"></div><div class="absolute top-12 left-12 w-1.5 h-1.5 bg-white rounded-full realistic-star"></div><div class="absolute top-24 left-36 w-2 h-2 bg-white rounded-full realistic-star" style="animation-delay: 1s;"></div><div class="absolute top-8 left-60 w-1.5 h-1.5 bg-white rounded-full realistic-star" style="animation-delay: 2s;"></div>`;
       }
-      
       body.className = `min-h-screen font-sans py-10 px-4 transition-colors duration-1000 relative overflow-x-hidden ${bgClass}`;
       decor.innerHTML = decorHtml;
     }
@@ -409,33 +257,25 @@ async function callAPI(payload) {
       const toggleIcon = document.getElementById('toggle-icon');
       if (passInput.type === 'password') {
         passInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
+        toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
       } else {
         passInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
+        toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
       }
     }
 
     function showPage(pageId) {
-      document.getElementById('login-page').classList.add('hidden');
-      document.getElementById('register-page').classList.add('hidden');
-      document.getElementById('dashboard-page').classList.add('hidden');
-      document.getElementById('admin-page').classList.add('hidden');
-      
+      ['login-page', 'register-page', 'dashboard-page', 'admin-page'].forEach(id => document.getElementById(id).classList.add('hidden'));
       const appCont = document.getElementById('app-container');
       if(pageId === 'admin-page') {
-        appCont.classList.remove('max-w-md');
-        appCont.classList.add('max-w-3xl');
+        appCont.classList.remove('max-w-md'); appCont.classList.add('max-w-3xl');
       } else {
-        appCont.classList.add('max-w-md');
-        appCont.classList.remove('max-w-3xl');
+        appCont.classList.add('max-w-md'); appCont.classList.remove('max-w-3xl');
       }
-      
       document.getElementById(pageId).classList.remove('hidden');
     }
 
+    // ================= FUNGSI AKUN & OTENTIKASI =================
     async function doRegister() {
       const nama = document.getElementById('reg-nama').value;
       const user = document.getElementById('reg-user').value;
@@ -451,79 +291,74 @@ async function callAPI(payload) {
     async function doLogin() {
       const user = document.getElementById('log-user').value;
       const pass = document.getElementById('log-pass').value;
-      const rememberMeChecked = document.getElementById('remember-me').checked;
+      const rememberMe = document.getElementById('remember-me').checked;
       
       if(!user || !pass) return alert("Isi username dan password!");
 
       let res = await callAPI({ action: 'login', username: user, password: pass });
+      
       if(res.success) {
-        if (rememberMeChecked) {
-          localStorage.setItem('dorkas_user', user);
-          localStorage.setItem('dorkas_pass', pass);
+        if (rememberMe) {
+          localStorage.setItem('dorkas_user', user); localStorage.setItem('dorkas_pass', pass);
         } else {
-          localStorage.removeItem('dorkas_user');
-          localStorage.removeItem('dorkas_pass');
+          localStorage.removeItem('dorkas_user'); localStorage.removeItem('dorkas_pass');
         }
 
         currentUser = res.nama;
         currentRole = res.role;
+        
         if(currentRole === 'Admin') {
           showPage('admin-page');
-          let gps = await callAPI({ action: 'getGps' });
-          document.getElementById('admin-lat').value = gps.lat;
-          document.getElementById('admin-lon').value = gps.lon;
+          initAdminGPS();
         } else {
           setGreeting();
           showPage('dashboard-page');
-          let gps = await callAPI({ action: 'getGps' });
-          latSekolah = gps.lat;
-          lonSekolah = gps.lon;
           initCekGPS();
         }
       } else {
-        alert(res.message);
+        alert(res.message || "Gagal masuk. Cek username dan password.");
       }
     }
 
     function setGreeting() {
       const hour = new Date().getHours();
-      let sapaan = 'Malam';
-      if(hour >= 4 && hour < 11) sapaan = 'Pagi';
-      else if(hour >= 11 && hour < 15) sapaan = 'Siang';
-      else if(hour >= 15 && hour < 18) sapaan = 'Sore';
+      let sapaan = (hour >= 4 && hour < 11) ? 'Pagi' : (hour >= 11 && hour < 15) ? 'Siang' : (hour >= 15 && hour < 18) ? 'Sore' : 'Malam';
       document.getElementById('greeting').innerHTML = `Halo, Selamat ${sapaan}! <br><span class="text-blue-600">${currentUser}</span>`;
     }
 
     function logout() {
-      currentUser = '';
-      currentRole = '';
+      currentUser = ''; currentRole = '';
       document.getElementById('log-pass').value = localStorage.getItem('dorkas_pass') || '';
       showPage('login-page');
     }
     
-    // --- FUNGSI ADMIN ---
+    // ================= FUNGSI ADMIN =================
+    async function initAdminGPS() {
+       try {
+         let response = await fetch(`${API_URL}?action=getGps`);
+         let gps = await response.json();
+         document.getElementById('admin-lat').value = gps.lat;
+         document.getElementById('admin-lon').value = gps.lon;
+       } catch (e) {
+         console.error("Gagal load GPS Admin");
+       }
+    }
+
     async function lihatData() {
       const start = document.getElementById('filter-start').value;
       const end = document.getElementById('filter-end').value;
-      
       if(!start || !end) return alert('Pilih Tanggal Dari dan Tanggal Sampai terlebih dahulu!');
-      if(start > end) return alert('Tanggal Dari tidak boleh melewati Tanggal Sampai!');
-
+      
       const btn = document.getElementById('btn-lihat');
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Loading...';
-      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Loading...'; btn.disabled = true;
 
       let res = await callAPI({ action: 'getFilteredAbsensi', startDate: start, endDate: end });
       
-      btn.innerHTML = '<i class="fa-solid fa-eye mr-1"></i> Tampilkan';
-      btn.disabled = false;
-      
-      cachedDataSiswa = res.siswa;
-      cachedDataKBTK = res.kbtk;
-      cachedDataSD = res.sd;
-      cachedDataSMP = res.smp;
-      currentStartDate = start;
-      currentEndDate = end;
+      btn.innerHTML = '<i class="fa-solid fa-eye mr-1"></i> Tampilkan'; btn.disabled = false;
+      if(!res.success && res.message) return alert(res.message);
+
+      cachedDataSiswa = res.siswa; cachedDataKBTK = res.kbtk; cachedDataSD = res.sd; cachedDataSMP = res.smp;
+      currentStartDate = start; currentEndDate = end;
       
       renderTableHTML('tabel-siswa', res.siswa);
       renderTableHTML('tabel-kbtk', res.kbtk);
@@ -537,25 +372,18 @@ async function callAPI(payload) {
     function renderTableHTML(elementId, dataArray) {
       let html = '<table class="w-full text-left text-xs border-collapse">';
       if(dataArray.length <= 1) {
-         html += '<tr><td class="p-6 text-center text-gray-500 italic">Tidak ada data di rentang tanggal ini.</td></tr>';
+         html += '<tr><td class="p-6 text-center text-gray-500 italic">Tidak ada data.</td></tr>';
       } else {
-         html += '<thead class="bg-indigo-50 text-indigo-800 uppercase tracking-wider">';
-         html += '<tr>';
-         dataArray[0].forEach((h, index) => {
-            html += `<th class="p-3 border-b">${h}</th>`;
-         });
-         html += '</tr></thead><tbody class="bg-white divide-y divide-gray-100">';
+         html += '<thead class="bg-indigo-50 text-indigo-800 uppercase"><tr>';
+         dataArray[0].forEach(h => html += `<th class="p-3 border-b">${h}</th>`);
+         html += '</tr></thead><tbody class="divide-y divide-gray-100">';
          for(let i = 1; i < dataArray.length; i++) {
             html += '<tr class="hover:bg-gray-50">';
-            dataArray[i].forEach((cell, index) => {
-               if(index === 5 || index === 6) {
-                  if(cell && cell !== '-' && cell !== '') {
-                     html += `<td class="p-3 whitespace-nowrap"><a href="${cell}" target="_blank" class="text-blue-600 hover:underline"><i class="fa-solid fa-image"></i> Lihat</a></td>`;
-                  } else {
-                     html += `<td class="p-3 text-gray-400">-</td>`;
-                  }
+            dataArray[i].forEach((cell, idx) => {
+               if((idx === 5 || idx === 6) && cell && cell !== '-') {
+                  html += `<td class="p-3 whitespace-nowrap"><a href="${cell}" target="_blank" class="text-blue-600 hover:underline"><i class="fa-solid fa-image"></i> Lihat</a></td>`;
                } else {
-                  html += `<td class="p-3 whitespace-nowrap text-gray-700">${cell}</td>`;
+                  html += `<td class="p-3 whitespace-nowrap">${cell}</td>`;
                }
             });
             html += '</tr>';
@@ -567,22 +395,13 @@ async function callAPI(payload) {
     }
 
     function switchTab(tabId) {
-      const tabs = ['siswa', 'kbtk', 'sd', 'smp'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tab-btn-${t}`);
-        const div = document.getElementById(`tabel-${t}`);
-        if (t === tabId) {
-          btn.className = "px-5 py-3 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white transition-colors";
-          div.classList.remove('hidden');
-        } else {
-          btn.className = "px-5 py-3 text-sm font-bold text-gray-500 hover:text-indigo-600 bg-gray-50 transition-colors";
-          div.classList.add('hidden');
-        }
+      ['siswa', 'kbtk', 'sd', 'smp'].forEach(t => {
+        document.getElementById(`tab-btn-${t}`).className = (t === tabId) ? "px-5 py-3 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white" : "px-5 py-3 text-sm font-bold text-gray-500 hover:text-indigo-600 bg-gray-50";
+        document.getElementById(`tabel-${t}`).classList.toggle('hidden', t !== tabId);
       });
     }
 
     function downloadExcel() {
-      if(!cachedDataSiswa) return alert('Silakan klik Tampilkan data terlebih dahulu.');
       const workbook = XLSX.utils.book_new();
       if(cachedDataSiswa.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataSiswa), "Siswa");
       if(cachedDataKBTK.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataKBTK), "KB-TK");
@@ -594,20 +413,15 @@ async function callAPI(payload) {
     async function simpanGPS() {
       const newLat = document.getElementById('admin-lat').value;
       const newLon = document.getElementById('admin-lon').value;
-      if(!newLat || !newLon) return alert('Latitude dan Longitude harus diisi!');
+      if(!newLat || !newLon) return alert('Harus diisi!');
       let res = await callAPI({ action: 'updateGps', lat: newLat, lon: newLon });
       alert(res.message);
     }
 
+    // ================= FUNGSI LOKASI & ABSENSI =================
     function updateGpsUI(status, message) {
-      const box = document.getElementById('gps-box');
-      const iconBg = document.getElementById('gps-icon-bg');
-      const icon = document.getElementById('gps-icon');
-      const text = document.getElementById('gps-status');
-      
-      text.innerText = message;
-      icon.className = ''; 
-      
+      const box = document.getElementById('gps-box'), iconBg = document.getElementById('gps-icon-bg'), icon = document.getElementById('gps-icon'), text = document.getElementById('gps-status');
+      text.innerText = message; icon.className = ''; 
       if(status === 'loading') {
         box.className = "bg-blue-50/95 border border-blue-100 p-3 rounded-xl flex items-center gap-3 mb-6";
         iconBg.className = "w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0";
@@ -626,48 +440,49 @@ async function callAPI(payload) {
       }
     }
 
-    function initCekGPS() {
-      updateGpsUI('loading', 'Mencari lokasi GPS Anda...');
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          userLat = position.coords.latitude;
-          userLon = position.coords.longitude;
-          let jarak = hitungJarak(latSekolah, lonSekolah, userLat, userLon);
-          if(jarak <= 150) {
-            isInRadius = true;
-            updateGpsUI('success', `Valid: Anda di area sekolah (${Math.round(jarak)}m).`);
-          } else {
-            isInRadius = false;
-            updateGpsUI('error', `Di Luar Area! Jarak Anda: ${Math.round(jarak)}m. (Maks: 150m)`);
-          }
-        }, err => {
-          alert("Izinkan akses lokasi (GPS) pada browser Anda untuk absen!");
-          updateGpsUI('error', 'Akses GPS ditolak!');
-        }, { enableHighAccuracy: true });
+    async function initCekGPS() {
+      updateGpsUI('loading', 'Mengambil referensi GPS...');
+      try {
+        let response = await fetch(`${API_URL}?action=getGps`);
+        let gps = await response.json();
+        latSekolah = parseFloat(gps.lat);
+        lonSekolah = parseFloat(gps.lon);
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(position => {
+            userLat = position.coords.latitude;
+            userLon = position.coords.longitude;
+            let jarak = hitungJarak(latSekolah, lonSekolah, userLat, userLon);
+            if(jarak <= 150) {
+              isInRadius = true;
+              updateGpsUI('success', `Valid: Anda di area sekolah (${Math.round(jarak)}m).`);
+            } else {
+              isInRadius = false;
+              updateGpsUI('error', `Di Luar Area! Jarak Anda: ${Math.round(jarak)}m. (Maks: 150m)`);
+            }
+          }, err => {
+            alert("Izinkan akses lokasi (GPS) pada browser Anda!");
+            updateGpsUI('error', 'Akses GPS ditolak!');
+          }, { enableHighAccuracy: true });
+        }
+      } catch (err) {
+        updateGpsUI('error', 'Gagal memuat GPS server.');
       }
     }
 
     function hitungJarak(lat1, lon1, lat2, lon2) {
-      const R = 6371e3; 
-      const p1 = lat1 * Math.PI/180;
-      const p2 = lat2 * Math.PI/180;
-      const dp = (lat2-lat1) * Math.PI/180;
-      const dl = (lon2-lon1) * Math.PI/180;
-      const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
+      const R = 6371e3, p1 = lat1 * Math.PI/180, p2 = lat2 * Math.PI/180;
+      const dp = (lat2-lat1) * Math.PI/180, dl = (lon2-lon1) * Math.PI/180;
+      const a = Math.sin(dp/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
     }
 
-    // --- KAMERA NATIVE HP ---
     function siapkanAbsen(tipe) {
-      if(!isInRadius) return alert("Anda tidak berada di radius 150 meter dari titik koordinat sekolah!");
-      
+      if(!isInRadius) return alert("Anda di luar radius 150 meter dari sekolah!");
       tipeAbsenSekarang = tipe;
       document.getElementById('kamera-instruksi').innerText = `Absen ${tipe.toUpperCase()} - Ambil foto selfie Anda`;
-      
       document.getElementById('tombol-absen-box').classList.add('hidden');
       document.getElementById('camera-box').classList.remove('hidden');
-      
       document.getElementById('foto-input').value = '';
       document.getElementById('foto-preview').classList.add('hidden');
       document.getElementById('btn-snap').classList.add('hidden'); 
@@ -676,11 +491,9 @@ async function callAPI(payload) {
     function previewFoto(event) {
       const file = event.target.files[0];
       if(!file) return;
-      
       const reader = new FileReader();
       reader.onload = function(e) {
         fotoBase64Data = e.target.result;
-        
         document.getElementById('foto-preview').src = fotoBase64Data;
         document.getElementById('foto-preview').classList.remove('hidden');
         document.getElementById('btn-snap').classList.remove('hidden');
@@ -695,11 +508,10 @@ async function callAPI(payload) {
     }
 
     async function simpanAbsen() {
-      if(!fotoBase64Data) return alert("Anda belum mengambil foto!");
-      
+      if(!fotoBase64Data) return alert("Ambil foto terlebih dahulu!");
       document.getElementById('camera-box').classList.add('hidden');
       document.getElementById('tombol-absen-box').classList.remove('hidden');
-      updateGpsUI('loading', 'Menyimpan absensi & mengunggah foto... mohon tunggu.');
+      updateGpsUI('loading', 'Menyimpan absensi & mengunggah foto...');
       
       let res = await callAPI({
         action: 'absen',
