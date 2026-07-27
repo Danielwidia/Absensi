@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Absensi - Sekolah Kristen Dorkas</title>
+  <!-- Tailwind CSS untuk styling wrapper -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Memastikan iframe merentang penuh menutupi layar tanpa scroll ganda */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f3f4f6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Kontainer Utama Iframe -->
+  <div class="w-full h-full relative flex flex-col">
+    
+    <!-- 
+      Ganti URL di bawah ini ('https://script.google.com/macros/s/...' ) 
+      dengan Link Web App Google Apps Script Anda yang sebenarnya.
+    -->
+    <iframe 
+      src="https://script.google.com/macros/s/AKfycbzoaSWdE-KYlcJq6NciHD1M5nGwEGiUlFI4UfTLQKDEu-1mG5bD8tIyFb3CbXpVGDQZ5w/exec"
+      class="w-full h-full border-0 shadow-inner"
+      allow="geolocation; camera; microphone"
+      title="Aplikasi Absensi Sekolah Kristen Dorkas">
+    </iframe>
+
+  </div>
+
+</body>
+</html>
