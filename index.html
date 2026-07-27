@@ -4,37 +4,502 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Absensi - Sekolah Kristen Dorkas</title>
-  <!-- Tailwind CSS untuk styling wrapper -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SheetJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
   <style>
-    /* Memastikan iframe merentang penuh menutupi layar tanpa scroll ganda */
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #f3f4f6;
+    .animate-pulse-fast { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    .table-container::-webkit-scrollbar, .tab-nav::-webkit-scrollbar { height: 6px; }
+    .table-container::-webkit-scrollbar-track, .tab-nav::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+    .table-container::-webkit-scrollbar-thumb, .tab-nav::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    
+    .glass-gradient-top {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 35%, rgba(255, 255, 255, 0.98) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-18px) scale(1.03); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+    .animate-float-slow { animation: floatSlow 7s ease-in-out infinite; }
+
+    @keyframes floatCloud {
+      0% { transform: translateX(0px); }
+      50% { transform: translateX(25px); }
+      100% { transform: translateX(0px); }
+    }
+    .animate-cloud { animation: floatCloud 12s ease-in-out infinite; }
+    
+    @keyframes realisticGlow {
+      0%, 100% { box-shadow: 0 0 40px 10px rgba(255, 204, 0, 0.4), 0 0 80px 30px rgba(255, 102, 0, 0.2); }
+      50% { box-shadow: 0 0 60px 20px rgba(255, 221, 0, 0.6), 0 0 110px 40px rgba(255, 136, 0, 0.3); }
+    }
+    .realistic-sun {
+      background: radial-gradient(circle at 30% 30%, #fff700, #ff8800);
+      animation: realisticGlow 4s ease-in-out infinite, floatSlow 6s ease-in-out infinite;
+    }
+
+    @keyframes realisticMoon {
+      0%, 100% { box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.8), 0 0 35px 10px rgba(200,220,255,0.3); }
+      50% { box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.9), 0 0 50px 18px rgba(200,220,255,0.5); }
+    }
+    .realistic-moon {
+      background: radial-gradient(circle at 35% 35%, #ffffff, #cfd8dc);
+      animation: realisticMoon 5s ease-in-out infinite, floatSlow 8s ease-in-out infinite;
+    }
+
+    .realistic-cloud {
+      background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(240,244,248,0.7));
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 50px;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.7); filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)); }
+      50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)); }
+    }
+    .realistic-star { animation: starTwinkle 3s ease-in-out infinite; }
   </style>
 </head>
-<body>
-
-  <!-- Kontainer Utama Iframe -->
-  <div class="w-full h-full relative flex flex-col">
+<body id="main-body" class="bg-gray-100 min-h-screen font-sans py-10 px-4 transition-colors duration-1000 relative overflow-x-hidden">
+  
+  <div id="theme-decorations" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+  
+  <div class="max-w-md mx-auto p-8 glass-gradient-top rounded-3xl shadow-2xl relative z-10 overflow-hidden transition-all duration-500" id="app-container">
     
-    <!-- 
-      Ganti URL di bawah ini ('https://script.google.com/macros/s/...' ) 
-      dengan Link Web App Google Apps Script Anda yang sebenarnya.
-    -->
-    <iframe 
-      src="https://script.google.com/macros/s/AKfycbzoaSWdE-KYlcJq6NciHD1M5nGwEGiUlFI4UfTLQKDEu-1mG5bD8tIyFb3CbXpVGDQZ5w/exec"
-      class="w-full h-full border-0 shadow-inner"
-      allow="geolocation; camera; microphone"
-      title="Aplikasi Absensi Sekolah Kristen Dorkas">
-    </iframe>
+    <div class="absolute -top-16 -right-16 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-2xl pointer-events-none"></div>
+    <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-orange-100 rounded-full opacity-50 blur-2xl pointer-events-none"></div>
 
+    <div class="text-center mb-8 relative z-10">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-2xl shadow-lg mb-4">
+        <i class="fa-solid fa-school text-3xl"></i>
+      </div>
+      <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Sekolah Kristen Dorkas</h1>
+      <p class="text-sm text-gray-500 mt-1">Sistem Absensi Digital</p>
+    </div>
+
+    <!-- LOGIN PAGE -->
+    <div id="login-page" class="relative z-10">
+      <div class="space-y-4">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-400"></i></div>
+          <input type="text" id="log-user" placeholder="Username" class="w-full pl-10 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+        </div>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
+          <input type="password" id="log-pass" placeholder="Password" class="w-full pl-10 pr-10 py-3 bg-white/80 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility()"><i id="toggle-icon" class="fa-solid fa-eye-slash text-gray-400"></i></div>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <label class="flex items-center text-sm text-gray-600 cursor-pointer">
+            <input type="checkbox" id="remember-me" class="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded">
+            <span class="font-medium">Ingat saya di perangkat ini</span>
+          </label>
+        </div>
+        <button onclick="doLogin()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all mt-2">
+          Masuk <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+      <p class="mt-6 text-sm text-center text-gray-600">Belum punya akun? <span onclick="showPage('register-page')" class="text-blue-600 cursor-pointer hover:underline font-bold">Daftar di sini</span></p>
+    </div>
+
+    <!-- REGISTER PAGE -->
+    <div id="register-page" class="hidden relative z-10">
+      <div class="space-y-3">
+        <input type="text" id="reg-nama" placeholder="Nama Lengkap" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none">
+        <input type="text" id="reg-user" placeholder="Username" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none">
+        <input type="password" id="reg-pass" placeholder="Password" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none">
+        <select id="reg-role" class="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl outline-none text-gray-600">
+          <option value="Siswa">Siswa</option>
+          <option value="Guru/Karyawan KB-TK">Guru/Karyawan KB-TK</option>
+          <option value="Guru/Karyawan SD">Guru/Karyawan SD</option>
+          <option value="Guru/Karyawan SMP">Guru/Karyawan SMP</option>
+        </select>
+        <button onclick="doRegister()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg transition-all mt-2">Daftar Akun Baru</button>
+        <button onclick="showPage('login-page')" class="w-full bg-white/80 text-gray-700 font-semibold py-3 rounded-xl">Kembali ke Login</button>
+      </div>
+    </div>
+    
+    <!-- ADMIN PAGE -->
+    <div id="admin-page" class="hidden relative z-10 w-full">
+      <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600"><i class="fa-solid fa-user-shield text-xl"></i></div>
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Panel Admin</h2>
+          <p class="text-xs text-gray-500">Pengaturan & Laporan Absensi</p>
+        </div>
+      </div>
+      
+      <div class="bg-indigo-50/95 p-5 rounded-2xl border border-indigo-100 mb-4">
+        <h3 class="font-bold text-indigo-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-file-invoice"></i> Filter Data Laporan</h3>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div><label class="text-xs font-semibold text-gray-600 uppercase">Dari Tanggal</label><input type="date" id="filter-start" class="w-full mt-1 px-3 py-2 bg-white border rounded-lg text-sm"></div>
+          <div><label class="text-xs font-semibold text-gray-600 uppercase">Sampai Tanggal</label><input type="date" id="filter-end" class="w-full mt-1 px-3 py-2 bg-white border rounded-lg text-sm"></div>
+        </div>
+        <div class="flex gap-2">
+          <button id="btn-lihat" onclick="lihatData()" class="w-1/2 bg-indigo-600 text-white font-semibold py-2 rounded-xl text-sm shadow-md">Tampilkan</button>
+          <button id="btn-download" onclick="downloadExcel()" class="w-1/2 bg-green-600 text-white font-semibold py-2 rounded-xl text-sm shadow-md hidden">Unduh Excel</button>
+        </div>
+      </div>
+
+      <div id="data-preview-section" class="hidden mb-6 bg-white border rounded-2xl overflow-hidden shadow-sm">
+        <div class="flex border-b bg-gray-50 overflow-x-auto whitespace-nowrap tab-nav">
+          <button id="tab-btn-siswa" onclick="switchTab('siswa')" class="px-5 py-3 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white">Siswa</button>
+          <button id="tab-btn-kbtk" onclick="switchTab('kbtk')" class="px-5 py-3 text-sm font-bold text-gray-500">Guru KB-TK</button>
+          <button id="tab-btn-sd" onclick="switchTab('sd')" class="px-5 py-3 text-sm font-bold text-gray-500">Guru SD</button>
+          <button id="tab-btn-smp" onclick="switchTab('smp')" class="px-5 py-3 text-sm font-bold text-gray-500">Guru SMP</button>
+        </div>
+        <div class="p-4 table-container overflow-x-auto">
+          <div id="tabel-siswa" class="min-w-max"></div>
+          <div id="tabel-kbtk" class="min-w-max hidden"></div>
+          <div id="tabel-sd" class="min-w-max hidden"></div>
+          <div id="tabel-smp" class="min-w-max hidden"></div>
+        </div>
+      </div>
+
+      <div class="bg-blue-50/95 p-5 rounded-2xl border border-blue-100 mb-6">
+        <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-map-location-dot"></i> Koordinat Sekolah</h3>
+        <label class="text-xs font-semibold text-gray-600 uppercase">Latitude</label>
+        <input type="text" id="admin-lat" class="w-full mt-1 mb-3 px-3 py-2 bg-white border rounded-lg text-sm">
+        <label class="text-xs font-semibold text-gray-600 uppercase">Longitude</label>
+        <input type="text" id="admin-lon" class="w-full mt-1 mb-4 px-3 py-2 bg-white border rounded-lg text-sm">
+        <button onclick="simpanGPS()" class="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl shadow-md">Simpan Koordinat</button>
+      </div>
+      <button onclick="logout()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-100">Logout</button>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard-page" class="hidden relative z-10">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+        <div>
+          <h2 id="greeting" class="text-xl font-extrabold text-gray-800"></h2>
+          <p class="text-sm text-gray-500">Siap untuk absen hari ini?</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><i class="fa-solid fa-user-astronaut text-xl"></i></div>
+      </div>
+      
+      <div id="gps-box" class="bg-blue-50/95 border border-blue-100 p-3 rounded-xl flex items-center gap-3 mb-6">
+        <div id="gps-icon-bg" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0"><i id="gps-icon" class="fa-solid fa-location-crosshairs animate-pulse-fast"></i></div>
+        <span id="gps-status" class="text-sm font-semibold text-blue-700 leading-tight">Mencari lokasi GPS Anda...</span>
+      </div>
+
+      <!-- Kamera Native HP -->
+      <div id="camera-box" class="mb-6 hidden animate-fade-in">
+        <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-2xl p-6 text-center mb-3">
+          <p class="text-sm font-semibold text-indigo-800 mb-3" id="kamera-instruksi">Silakan ambil foto selfie Anda</p>
+          <input type="file" id="foto-input" accept="image/*" capture="user" class="hidden" onchange="previewFoto(event)">
+          <label for="foto-input" class="cursor-pointer inline-flex items-center gap-2 bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md">
+            <i class="fa-solid fa-camera"></i> Buka Kamera HP
+          </label>
+          <img id="foto-preview" class="mt-4 mx-auto max-h-56 rounded-xl shadow-md hidden" src="" alt="Preview">
+        </div>
+        <button id="btn-snap" onclick="simpanAbsen()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold p-4 rounded-xl shadow-lg hidden flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-xl"></i> Simpan Absen & Foto
+        </button>
+        <button onclick="batalAbsen()" class="w-full mt-3 bg-white border text-gray-700 font-bold p-3 rounded-xl">Batal Absen</button>
+      </div>
+
+      <!-- Tombol Absen -->
+      <div id="tombol-absen-box" class="grid grid-cols-2 gap-3 mb-6">
+        <button onclick="siapkanAbsen('Masuk')" class="flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm">
+          <i class="fa-solid fa-right-to-bracket"></i> MASUK
+        </button>
+        <button onclick="siapkanAbsen('Pulang')" class="flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm">
+          <i class="fa-solid fa-person-walking-arrow-right"></i> PULANG
+        </button>
+      </div>
+
+      <!-- Form Izin -->
+      <div class="bg-gray-50/90 rounded-2xl border mb-6 overflow-hidden shadow-sm">
+        <button onclick="toggleFormIzin()" class="w-full p-4 flex items-center justify-between bg-gray-100 text-gray-700 font-bold text-sm">
+          <span class="flex items-center gap-2"><i class="fa-solid fa-envelope-open-text"></i> Form Izin</span>
+          <i id="izin-icon" class="fa-solid fa-chevron-down transition-transform"></i>
+        </button>
+        <div id="izin-content" class="p-5 hidden border-t bg-white/95 space-y-3">
+          <input type="text" id="ket-izin" placeholder="Alasan (Sakit / Keperluan lain)" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm">
+          <button onclick="kirimIzin()" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl shadow-md">Kirim Izin</button>
+        </div>
+      </div>
+      <button onclick="logout()" class="w-full mt-2 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-100">Keluar</button>
+    </div>
   </div>
 
+  <script>
+    // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+    const API_URL = "https://script.google.com/macros/s/AKfycbzoaSWdE-KYlcJq6NciHD1M5nGwEGiUlFI4UfTLQKDEu-1mG5bD8tIyFb3CbXpVGDQZ5w/exec";
+
+    let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
+    let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
+    let cachedDataSiswa = [], cachedDataKBTK = [], cachedDataSD = [], cachedDataSMP = [];
+    let currentStartDate = '', currentEndDate = '';
+
+    async function callAPI(payload) {
+      try {
+        let response = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        return await response.json();
+      } catch (err) {
+        alert("Koneksi ke server gagal: " + err.message);
+        return { success: false };
+      }
+    }
+
+    function toggleFormIzin() {
+      const content = document.getElementById('izin-content');
+      const icon = document.getElementById('izin-icon');
+      content.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
+    }
+
+    function setAtmosphere() {
+      const hour = new Date().getHours();
+      const body = document.getElementById('main-body');
+      const decor = document.getElementById('theme-decorations');
+      let bgClass = '', decorHtml = '';
+      
+      if (hour >= 4 && hour < 11) {
+        bgClass = 'bg-gradient-to-br from-sky-200 via-blue-200 to-indigo-200';
+        decorHtml = `<div class="absolute top-10 left-12 w-20 h-20 rounded-full realistic-sun"></div><div class="absolute top-16 right-16 w-36 h-12 realistic-cloud animate-cloud opacity-80"></div>`;
+      } else if (hour >= 11 && hour < 15) {
+        bgClass = 'bg-gradient-to-br from-blue-300 via-sky-300 to-cyan-300';
+        decorHtml = `<div class="absolute top-8 right-16 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-12 left-10 w-40 h-14 realistic-cloud animate-cloud opacity-90"></div>`;
+      } else if (hour >= 15 && hour < 18) {
+        bgClass = 'bg-gradient-to-br from-orange-200 via-amber-300 to-rose-300';
+        decorHtml = `<div class="absolute top-12 left-16 w-24 h-24 rounded-full realistic-sun"></div>`;
+      } else {
+        bgClass = 'bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950';
+        decorHtml = `<div class="absolute top-10 right-16 w-20 h-20 rounded-full realistic-moon"></div><div class="absolute top-12 left-12 w-1.5 h-1.5 bg-white rounded-full realistic-star"></div>`;
+      }
+      body.className = `min-h-screen font-sans py-10 px-4 transition-colors duration-1000 relative overflow-x-hidden ${bgClass}`;
+      decor.innerHTML = decorHtml;
+    }
+
+    window.onload = function() {
+      setAtmosphere(); 
+      const savedUser = localStorage.getItem('dorkas_user');
+      const savedPass = localStorage.getItem('dorkas_pass');
+      if (savedUser && savedPass) {
+        document.getElementById('log-user').value = savedUser;
+        document.getElementById('log-pass').value = savedPass;
+        document.getElementById('remember-me').checked = true;
+      }
+    };
+
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('log-pass');
+      const toggleIcon = document.getElementById('toggle-icon');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+      } else {
+        passInput.type = 'password';
+        toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+      }
+    }
+
+    function showPage(pageId) {
+      ['login-page', 'register-page', 'dashboard-page', 'admin-page'].forEach(p => document.getElementById(p).classList.add('hidden'));
+      const appCont = document.getElementById('app-container');
+      if(pageId === 'admin-page') { appCont.classList.remove('max-w-md'); appCont.classList.add('max-w-3xl'); }
+      else { appCont.classList.add('max-w-md'); appCont.classList.remove('max-w-3xl'); }
+      document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    async function doRegister() {
+      const nama = document.getElementById('reg-nama').value;
+      const user = document.getElementById('reg-user').value;
+      const pass = document.getElementById('reg-pass').value;
+      const role = document.getElementById('reg-role').value;
+      if(!nama || !user || !pass) return alert("Harap isi semua kolom!");
+      
+      let res = await callAPI({ action: 'register', nama, username: user, password: pass, role });
+      alert(res.message);
+      if(res.success) showPage('login-page');
+    }
+
+    async function doLogin() {
+      const user = document.getElementById('log-user').value;
+      const pass = document.getElementById('log-pass').value;
+      if(!user || !pass) return alert("Isi username dan password!");
+
+      let res = await callAPI({ action: 'login', username: user, password: pass });
+      if(res.success) {
+        if (document.getElementById('remember-me').checked) {
+          localStorage.setItem('dorkas_user', user); localStorage.setItem('dorkas_pass', pass);
+        } else {
+          localStorage.removeItem('dorkas_user'); localStorage.removeItem('dorkas_pass');
+        }
+        currentUser = res.nama; currentRole = res.role;
+        if(currentRole === 'Admin') {
+          showPage('admin-page');
+          let gps = await callAPI({ action: 'getGps' });
+          document.getElementById('admin-lat').value = gps.lat;
+          document.getElementById('admin-lon').value = gps.lon;
+        } else {
+          setGreeting();
+          showPage('dashboard-page');
+          let gps = await callAPI({ action: 'getGps' });
+          latSekolah = gps.lat; lonSekolah = gps.lon;
+          initCekGPS();
+        }
+      } else {
+        alert(res.message);
+      }
+    }
+
+    function setGreeting() {
+      const hour = new Date().getHours();
+      let sapaan = (hour >= 4 && hour < 11) ? 'Pagi' : (hour >= 11 && hour < 15) ? 'Siang' : (hour >= 15 && hour < 18) ? 'Sore' : 'Malam';
+      document.getElementById('greeting').innerHTML = `Halo, Selamat ${sapaan}! <br><span class="text-blue-600">${currentUser}</span>`;
+    }
+
+    function logout() { currentUser = ''; currentRole = ''; showPage('login-page'); }
+
+    async function lihatData() {
+      const startDate = document.getElementById('filter-start').value;
+      const endDate = document.getElementById('filter-end').value;
+      if(!startDate || !endDate) return alert('Pilih tanggal terlebih dahulu!');
+      
+      const btn = document.getElementById('btn-lihat');
+      btn.innerText = 'Loading...'; btn.disabled = true;
+      let res = await callAPI({ action: 'getFilteredAbsensi', startDate, endDate });
+      btn.innerText = 'Tampilkan'; btn.disabled = false;
+      
+      cachedDataSiswa = res.siswa; cachedDataKBTK = res.kbtk; cachedDataSD = res.sd; cachedDataSMP = res.smp;
+      currentStartDate = startDate; currentEndDate = endDate;
+      
+      renderTableHTML('tabel-siswa', res.siswa);
+      renderTableHTML('tabel-kbtk', res.kbtk);
+      renderTableHTML('tabel-sd', res.sd);
+      renderTableHTML('tabel-smp', res.smp);
+      document.getElementById('data-preview-section').classList.remove('hidden');
+      document.getElementById('btn-download').classList.remove('hidden');
+    }
+
+    function renderTableHTML(elementId, dataArray) {
+      let html = '<table class="w-full text-left text-xs border-collapse">';
+      if(dataArray.length <= 1) { html += '<tr><td class="p-6 text-center text-gray-500 italic">Tidak ada data.</td></tr>'; }
+      else {
+        html += '<thead class="bg-indigo-50 text-indigo-800 uppercase"><tr>';
+        dataArray[0].forEach(h => html += `<th class="p-3 border-b">${h}</th>`);
+        html += '</tr></thead><tbody class="divide-y">';
+        for(let i = 1; i < dataArray.length; i++) {
+          html += '<tr class="hover:bg-gray-50">';
+          dataArray[i].forEach((cell, idx) => {
+            if((idx === 5 || idx === 6) && cell && cell !== '-') {
+              html += `<td class="p-3"><a href="${cell}" target="_blank" class="text-blue-600 underline"><i class="fa-solid fa-image"></i> Lihat</a></td>`;
+            } else { html += `<td class="p-3">${cell}</td>`; }
+          });
+          html += '</tr>';
+        }
+        html += '</tbody>';
+      }
+      html += '</table>';
+      document.getElementById(elementId).innerHTML = html;
+    }
+
+    function switchTab(tabId) {
+      ['siswa', 'kbtk', 'sd', 'smp'].forEach(t => {
+        document.getElementById(`tab-btn-${t}`).className = (t === tabId) ? "px-5 py-3 text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white" : "px-5 py-3 text-sm font-bold text-gray-500";
+        document.getElementById(`tabel-${t}`).classList.toggle('hidden', t !== tabId);
+      });
+    }
+
+    function downloadExcel() {
+      const workbook = XLSX.utils.book_new();
+      if(cachedDataSiswa.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataSiswa), "Siswa");
+      if(cachedDataKBTK.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataKBTK), "KB-TK");
+      if(cachedDataSD.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataSD), "SD");
+      if(cachedDataSMP.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataSMP), "SMP");
+      XLSX.writeFile(workbook, `Laporan_Absensi_${currentStartDate}_sd_${currentEndDate}.xlsx`);
+    }
+
+    async function simpanGPS() {
+      const lat = document.getElementById('admin-lat').value;
+      const lon = document.getElementById('admin-lon').value;
+      let res = await callAPI({ action: 'updateGps', lat, lon });
+      alert(res.message);
+    }
+
+    function initCekGPS() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          userLat = position.coords.latitude; userLon = position.coords.longitude;
+          let jarak = hitungJarak(latSekolah, lonSekolah, userLat, userLon);
+          isInRadius = jarak <= 150;
+          document.getElementById('gps-status').innerText = isInRadius ? `Valid: Di area sekolah (${Math.round(jarak)}m).` : `Di Luar Area! Jarak: ${Math.round(jarak)}m.`;
+          document.getElementById('gps-box').className = isInRadius ? "bg-green-50 border border-green-200 p-3 rounded-xl flex items-center gap-3 mb-6" : "bg-red-50 border border-red-200 p-3 rounded-xl flex items-center gap-3 mb-6";
+        }, () => alert("Gagal mengambil akses GPS."), { enableHighAccuracy: true });
+      }
+    }
+
+    function hitungJarak(lat1, lon1, lat2, lon2) {
+      const R = 6371e3, p1 = lat1 * Math.PI/180, p2 = lat2 * Math.PI/180;
+      const dp = (lat2-lat1) * Math.PI/180, dl = (lon2-lon1) * Math.PI/180;
+      const a = Math.sin(dp/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    function siapkanAbsen(tipe) {
+      if(!isInRadius) return alert("Anda tidak berada di radius 150 meter dari sekolah!");
+      tipeAbsenSekarang = tipe;
+      document.getElementById('kamera-instruksi').innerText = `Absen ${tipe.toUpperCase()} - Ambil foto`;
+      document.getElementById('tombol-absen-box').classList.add('hidden');
+      document.getElementById('camera-box').classList.remove('hidden');
+      document.getElementById('foto-input').value = '';
+      document.getElementById('foto-preview').classList.add('hidden');
+      document.getElementById('btn-snap').classList.add('hidden'); 
+    }
+
+    function previewFoto(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        fotoBase64Data = e.target.result;
+        document.getElementById('foto-preview').src = fotoBase64Data;
+        document.getElementById('foto-preview').classList.remove('hidden');
+        document.getElementById('btn-snap').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function batalAbsen() {
+      fotoBase64Data = '';
+      document.getElementById('camera-box').classList.add('hidden');
+      document.getElementById('tombol-absen-box').classList.remove('hidden');
+    }
+
+    async function simpanAbsen() {
+      if(!fotoBase64Data) return alert("Ambil foto terlebih dahulu!");
+      document.getElementById('camera-box').classList.add('hidden');
+      document.getElementById('tombol-absen-box').classList.remove('hidden');
+      document.getElementById('gps-status').innerText = "Menyimpan data & foto...";
+      
+      let res = await callAPI({ action: 'absen', tipe: tipeAbsenSekarang, nama: currentUser, keterangan: 'Hadir', fotoBase64: fotoBase64Data });
+      alert(res.message);
+      fotoBase64Data = '';
+      initCekGPS();
+    }
+
+    async function kirimIzin() {
+      const ket = document.getElementById('ket-izin').value;
+      if(!ket) return alert("Isi alasan izin.");
+      let res = await callAPI({ action: 'absen', tipe: 'Izin', nama: currentUser, keterangan: ket, fotoBase64: null });
+      alert(res.message);
+      document.getElementById('ket-izin').value = '';
+      toggleFormIzin();
+    }
+  </script>
 </body>
 </html>
