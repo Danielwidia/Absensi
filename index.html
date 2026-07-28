@@ -68,7 +68,7 @@
             <span class="font-medium">Ingat saya di perangkat ini</span>
           </label>
         </div>
-        <button onclick="doLogin()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mt-2">
+        <button id="btn-login-submit" onclick="doLogin()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mt-2">
           Masuk <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
       </div>
@@ -178,7 +178,7 @@
         </button>
         <div id="izin-content" class="p-5 hidden border-t border-gray-100 bg-white/95 space-y-3">
           <input type="text" id="ket-izin" placeholder="Alasan (Sakit / Keperluan lain)" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm shadow-sm">
-          <button onclick="kirimIzin()" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl shadow-md"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin</button>
+          <button id="btn-izin" onclick="kirimIzin()" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl shadow-md transition-all"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin</button>
         </div>
       </div>
 
@@ -188,7 +188,7 @@
 
   <script>
     // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
-    const API_URL = "https://script.google.com/macros/s/AKfycbziLlQvgJbc2rbxi2BS92u6Z6kVVhfCyBShy3SShaSyCtimKQavGHLQ0NmhBEk8g4vvRQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycby_vSCubmddkFEWEy0INeHJEz9ZE-BpcQXUboJkdJXtZugKt0kPhXS4fTN5_1fRwiKxqQ/exec";
 
     let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
     let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
@@ -197,6 +197,7 @@
     // Variabel Status Absen Hari Ini
     let statusSudahMasuk = false;
     let statusSudahPulang = false;
+    let statusSudahIzin = false;
 
     async function callAPI(payload) {
       try {
@@ -278,27 +279,58 @@
     function renderTombolAbsen() {
       const btnMasuk = document.getElementById('btn-masuk');
       const btnPulang = document.getElementById('btn-pulang');
+      const btnIzin = document.getElementById('btn-izin');
+      const ketIzin = document.getElementById('ket-izin');
 
-      // Tombol Masuk
-      if (statusSudahMasuk) {
+      // 1. Logika Tombol Masuk
+      if (statusSudahIzin) {
+        btnMasuk.onclick = () => alert("Anda sudah izin hari ini!");
+        btnMasuk.className = "flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl shadow-sm font-bold text-sm cursor-not-allowed";
+        btnMasuk.innerHTML = `<i class="fa-solid fa-ban"></i> IZIN`;
+      } else if (statusSudahMasuk) {
         btnMasuk.onclick = () => alert("Anda sudah melakukan absen MASUK hari ini!");
         btnMasuk.className = "flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl shadow-sm font-bold text-sm cursor-not-allowed";
         btnMasuk.innerHTML = `<i class="fa-solid fa-check"></i> SUDAH MASUK`;
       } else {
         btnMasuk.onclick = () => siapkanAbsen('Masuk');
-        btnMasuk.className = "flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm hover:shadow-lg hover:-translate-y-0.5 transition-all";
+        btnMasuk.className = "flex items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm hover:shadow-lg transition-all";
         btnMasuk.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> MASUK`;
       }
 
-      // Tombol Pulang
-      if (statusSudahPulang) {
+      // 2. Logika Tombol Pulang
+      if (statusSudahIzin) {
+        btnPulang.onclick = () => alert("Anda izin hari ini, tidak perlu absen pulang.");
+        btnPulang.className = "flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl shadow-sm font-bold text-sm cursor-not-allowed";
+        btnPulang.innerHTML = `<i class="fa-solid fa-ban"></i> IZIN`;
+      } else if (statusSudahPulang) {
         btnPulang.onclick = () => alert("Anda sudah melakukan absen PULANG hari ini!");
         btnPulang.className = "flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl shadow-sm font-bold text-sm cursor-not-allowed";
         btnPulang.innerHTML = `<i class="fa-solid fa-check-double"></i> SUDAH PULANG`;
       } else {
         btnPulang.onclick = () => siapkanAbsen('Pulang');
-        btnPulang.className = "flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm hover:shadow-lg hover:-translate-y-0.5 transition-all";
+        btnPulang.className = "flex items-center justify-center gap-2 bg-gradient-to-br from-orange-400 to-orange-500 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm hover:shadow-lg transition-all";
         btnPulang.innerHTML = `<i class="fa-solid fa-person-walking-arrow-right"></i> PULANG`;
+      }
+
+      // 3. Logika Form Izin
+      if (statusSudahIzin) {
+        btnIzin.onclick = () => alert("Anda sudah izin hari ini!");
+        btnIzin.className = "w-full bg-gray-400 text-white font-bold py-3 rounded-xl shadow-sm cursor-not-allowed";
+        btnIzin.innerHTML = `<i class="fa-solid fa-check"></i> IZIN SUDAH TERCATAT`;
+        ketIzin.disabled = true;
+        ketIzin.placeholder = "Anda sudah izin hari ini.";
+      } else if (statusSudahMasuk) {
+        btnIzin.onclick = () => alert("Anda sudah absen hadir, tidak bisa mengajukan izin!");
+        btnIzin.className = "w-full bg-gray-400 text-white font-bold py-3 rounded-xl shadow-sm cursor-not-allowed";
+        btnIzin.innerHTML = `<i class="fa-solid fa-ban"></i> TIDAK BISA IZIN`;
+        ketIzin.disabled = true;
+        ketIzin.placeholder = "Anda sudah hadir di sekolah.";
+      } else {
+        btnIzin.onclick = kirimIzin;
+        btnIzin.className = "w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md transition-all";
+        btnIzin.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin`;
+        ketIzin.disabled = false;
+        ketIzin.placeholder = "Alasan (Sakit / Keperluan lain)";
       }
     }
 
@@ -319,10 +351,22 @@
       const user = document.getElementById('log-user').value;
       const pass = document.getElementById('log-pass').value;
       const rememberMe = document.getElementById('remember-me').checked;
+      const btnLogin = document.getElementById('btn-login-submit');
       
       if(!user || !pass) return alert("Isi username dan password!");
 
+      // Tampilan Tombol Loading
+      const originalBtnContent = btnLogin.innerHTML;
+      btnLogin.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...';
+      btnLogin.disabled = true;
+      btnLogin.classList.add('opacity-75', 'cursor-not-allowed');
+
       let res = await callAPI({ action: 'login', username: user, password: pass });
+      
+      // Kembalikan Tombol
+      btnLogin.innerHTML = originalBtnContent;
+      btnLogin.disabled = false;
+      btnLogin.classList.remove('opacity-75', 'cursor-not-allowed');
       
       if(res.success) {
         if (rememberMe) {
@@ -334,16 +378,17 @@
         currentUser = res.nama;
         currentRole = res.role;
         
-        // Simpan status apakah hari ini sudah absen masuk/pulang
+        // Simpan status absensi hari ini
         statusSudahMasuk = res.sudahMasuk;
         statusSudahPulang = res.sudahPulang;
+        statusSudahIzin = res.sudahIzin;
         
         if(currentRole === 'Admin') {
           showPage('admin-page');
           initAdminGPS();
         } else {
           setGreeting();
-          renderTombolAbsen(); // Terapkan status tombol saat ini
+          renderTombolAbsen();
           showPage('dashboard-page');
           initCekGPS();
         }
@@ -360,7 +405,7 @@
 
     function logout() {
       currentUser = ''; currentRole = '';
-      statusSudahMasuk = false; statusSudahPulang = false;
+      statusSudahMasuk = false; statusSudahPulang = false; statusSudahIzin = false;
       document.getElementById('log-pass').value = localStorage.getItem('dorkas_pass') || '';
       showPage('login-page');
     }
@@ -513,7 +558,6 @@
     function siapkanAbsen(tipe) {
       if(!isInRadius) return alert("Anda di luar radius 150 meter dari sekolah!");
       
-      // Jika mencoba absen pulang tapi belum absen masuk
       if(tipe === 'Pulang' && !statusSudahMasuk) {
         return alert("Anda belum melakukan absen MASUK hari ini!");
       }
@@ -562,7 +606,6 @@
 
       alert(res.message);
 
-      // Jika berhasil, update status dan perbarui tampilan tombol
       if (res.success) {
         if (tipeAbsenSekarang === 'Masuk') statusSudahMasuk = true;
         if (tipeAbsenSekarang === 'Pulang') statusSudahPulang = true;
@@ -588,7 +631,9 @@
       alert(res.message);
       
       if(res.success) {
+        statusSudahIzin = true;
         statusSudahMasuk = true;
+        statusSudahPulang = true;
         renderTombolAbsen();
       }
 
