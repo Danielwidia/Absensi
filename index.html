@@ -188,7 +188,7 @@
 
   <script>
     // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
-    const API_URL = "https://script.google.com/macros/s/AKfycby_vSCubmddkFEWEy0INeHJEz9ZE-BpcQXUboJkdJXtZugKt0kPhXS4fTN5_1fRwiKxqQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxnBoebRplaz9_1gOWQ1MRGlx7kHgKf-8CXoOBmUVXr_Qkdgs8lkXT7UghiRJisNhpLWQ/exec";
 
     let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
     let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
@@ -489,10 +489,18 @@
     }
     
     async function simpanGPS() {
-      const newLat = document.getElementById('admin-lat').value;
-      const newLon = document.getElementById('admin-lon').value;
-      if(!newLat || !newLon) return alert('Harus diisi!');
-      let res = await callAPI({ action: 'updateGps', lat: newLat, lon: newLon });
+      // Kita "bersihkan" inputan admin. Jika admin tak sengaja mengetik koma (,), akan otomatis diubah jadi titik (.)
+      let rawLat = document.getElementById('admin-lat').value.replace(',', '.');
+      let rawLon = document.getElementById('admin-lon').value.replace(',', '.');
+      
+      if(!rawLat || !rawLon) return alert('Latitude dan Longitude harus diisi!');
+      
+      let res = await callAPI({ 
+        action: 'updateGps', 
+        lat: parseFloat(rawLat), 
+        lon: parseFloat(rawLon) 
+      });
+      
       alert(res.message);
     }
 
