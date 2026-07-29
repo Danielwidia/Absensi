@@ -188,7 +188,7 @@
 
   <script>
     // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
-    const API_URL = "https://script.google.com/macros/s/AKfycbxnBoebRplaz9_1gOWQ1MRGlx7kHgKf-8CXoOBmUVXr_Qkdgs8lkXT7UghiRJisNhpLWQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxlvSrLieaKjsE5Ssob2n5X5S--TfkpLfHUeRlBVut5myQKLbohTLqgNu_NW9PmNOkPwQ/exec";
 
     let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
     let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
@@ -485,7 +485,29 @@
       if(cachedDataKBTK.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataKBTK), "KB-TK");
       if(cachedDataSD.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataSD), "SD");
       if(cachedDataSMP.length > 0) XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(cachedDataSMP), "SMP");
-      XLSX.writeFile(workbook, `Laporan_Absensi_Dorkas_${currentStartDate}_sd_${currentEndDate}.xlsx`);
+
+      const fileName = `Laporan_Absensi_Dorkas_${currentStartDate}_sd_${currentEndDate}.xlsx`;
+
+      try {
+        const wbout = XLSX.write(workbook, {bookType:'xlsx', type:'base64'});
+        const msg = {
+          action: 'downloadBlob',
+          data: wbout,
+          mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          filename: fileName
+        };
+
+        if (window.AndroidInterface) {
+          window.AndroidInterface.downloadBlob(wbout, msg.mime, 'filename=' + fileName);
+        } else {
+          // Relay untuk cross-origin iframe di Google Apps Script
+          window.parent.postMessage(msg, '*');
+          // Tetap jalankan download standar sebagai cadangan
+          XLSX.writeFile(workbook, fileName);
+        }
+      } catch (e) {
+        XLSX.writeFile(workbook, fileName);
+      }
     }
     
     async function simpanGPS() {
@@ -615,7 +637,13 @@
       alert(res.message);
 
       if (res.success) {
-        if (tipeAbsenSekarang === 'Masuk') statusSudahMasuk = true;
+        if (tipeAbsenSekarang === 'Masuk') {
+          statusSudahMasuk = true;
+          // Beritahu Android bahwa sudah absen agar alarm tidak muncul
+          if (window.AndroidInterface && window.AndroidInterface.markAsClockedIn) {
+            window.AndroidInterface.markAsClockedIn();
+          }
+        }
         if (tipeAbsenSekarang === 'Pulang') statusSudahPulang = true;
         renderTombolAbsen();
       }
@@ -642,6 +670,12 @@
         statusSudahIzin = true;
         statusSudahMasuk = true;
         statusSudahPulang = true;
+
+        // Beritahu Android bahwa sudah absen (melalui izin) agar alarm tidak muncul
+        if (window.AndroidInterface && window.AndroidInterface.markAsClockedIn) {
+          window.AndroidInterface.markAsClockedIn();
+        }
+
         renderTombolAbsen();
       }
 
