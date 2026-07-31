@@ -711,12 +711,18 @@
       if (res.success) {
         if (tipeAbsenSekarang === 'Masuk') {
           statusSudahMasuk = true;
-          // Beritahu Android bahwa sudah absen agar alarm tidak muncul
+          // Beritahu Android bahwa sudah absen MASUK agar alarm tidak muncul hari ini
           if (window.AndroidInterface && window.AndroidInterface.markAsClockedIn) {
-            window.AndroidInterface.markAsClockedIn();
+            window.AndroidInterface.markAsClockedIn('masuk');
           }
         }
-        if (tipeAbsenSekarang === 'Pulang') statusSudahPulang = true;
+        if (tipeAbsenSekarang === 'Pulang') {
+          statusSudahPulang = true;
+          // Beritahu Android bahwa sudah absen PULANG agar alarm tidak muncul hari ini
+          if (window.AndroidInterface && window.AndroidInterface.markAsClockedIn) {
+            window.AndroidInterface.markAsClockedIn('pulang');
+          }
+        }
         renderTombolAbsen();
       }
 
@@ -743,9 +749,10 @@
         statusSudahMasuk = true;
         statusSudahPulang = true;
 
-        // Beritahu Android bahwa sudah absen (melalui izin) agar alarm tidak muncul
+        // Beritahu Android bahwa sudah absen (melalui izin) agar alarm tidak muncul hari ini
         if (window.AndroidInterface && window.AndroidInterface.markAsClockedIn) {
-          window.AndroidInterface.markAsClockedIn();
+          window.AndroidInterface.markAsClockedIn('masuk');
+          window.AndroidInterface.markAsClockedIn('pulang');
         }
 
         renderTombolAbsen();
