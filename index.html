@@ -170,7 +170,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbw-O6UnXVW77Sy4W-pcqDCmgA3T-xU655X9hU7S58M3KOTaEiwZAvj5Zw1dTdhAac8t_w/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzs9F4EyD2B-BO7wUYeBiysdXwPjxe6nvGR-rjz1YXL57JiSKVFsoJ52iuexmurND7EKA/exec";
     let currentUser = '', currentRole = '', latSekolah = 0, lonSekolah = 0, isInRadius = false, fotoBase64Data = '', statusSudahMasuk = false, statusSudahPulang = false, statusSudahIzin = false;
 
     async function callAPI(p) { try { let r = await fetch(API_URL, { method: "POST", body: JSON.stringify(p), headers: { "Content-Type": "text/plain;charset=utf-8" } }); return await r.json(); } catch (e) { alert("Koneksi gagal: " + e.message); return { success: false }; } }
