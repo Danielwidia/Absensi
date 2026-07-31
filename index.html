@@ -405,11 +405,23 @@
           renderTombolAbsen();
           showPage('dashboard-page');
           initCekGPS();
-          // Pastikan jadwal terbaru tetap sinkron saat masuk ke dashboard
+          // Sinkronisasi jadwal saat login
           if (res.jadwal) syncNotificationSchedule(res.jadwal);
         }
       } else {
         alert(res.message || "Gagal masuk. Cek username dan password.");
+      }
+    }
+
+    async function refreshJadwalFromServer() {
+      try {
+        let response = await fetch(`${API_URL}?action=getJadwal`);
+        let res = await response.json();
+        if (res.success && res.jadwal) {
+          syncNotificationSchedule(res.jadwal);
+        }
+      } catch (e) {
+        console.error("Gagal refresh jadwal:", e);
       }
     }
 
@@ -640,6 +652,8 @@
               isInRadius = false;
               updateGpsUI('error', `Di Luar Area! Jarak Anda: ${Math.round(jarak)}m. (Maks: 150m)`);
             }
+            // Sinkronkan jadwal notifikasi setiap kali GPS dicek (saat dashboard dibuka)
+            refreshJadwalFromServer();
           }, err => {
             alert("Izinkan akses lokasi (GPS) pada browser Anda!");
             updateGpsUI('error', 'Akses GPS ditolak!');
