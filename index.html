@@ -127,6 +127,14 @@
       </div>
 
       <div class="bg-blue-50/95 p-5 rounded-2xl border border-blue-100 mb-6">
+        <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-bell"></i> Jadwal Notifikasi (Senin-Sabtu)</h3>
+        <div class="space-y-3 mb-4" id="jadwal-container">
+          <!-- Jadwal akan dimuat di sini -->
+        </div>
+        <button onclick="simpanJadwal()" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-xl shadow-md"><i class="fa-solid fa-save mr-2"></i> Simpan Jadwal</button>
+      </div>
+
+      <div class="bg-blue-50/95 p-5 rounded-2xl border border-blue-100 mb-6">
         <h3 class="font-bold text-blue-800 mb-3"><i class="fa-solid fa-map-location-dot"></i> Koordinat Sekolah</h3>
         <label class="text-xs font-semibold text-gray-600 uppercase">Latitude</label>
         <input type="text" id="admin-lat" class="w-full mt-1 mb-3 px-3 py-2 bg-white border rounded-lg text-sm">
@@ -188,7 +196,7 @@
 
   <script>
     // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
-    const API_URL = "https://script.google.com/macros/s/AKfycbwJaUI0pv6QeoJM0eHAleel83CTyCzAXX140L5Gft9g4D4pp8dOmm4WD38L9zI-IXer7Q/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyrq008bYPSX3mA4KgUDdo2N4YIC1ucwNCLPkkq1fT-dry66L80Yy-5vwMNUTg7Vj22GQ/exec";
 
     let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
     let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
@@ -382,15 +390,23 @@
         statusSudahMasuk = res.sudahMasuk;
         statusSudahPulang = res.sudahPulang;
         statusSudahIzin = res.sudahIzin;
-        
+
+        // Sinkronisasi Jadwal Notifikasi ke Android
+        if (res.jadwal) {
+          syncNotificationSchedule(res.jadwal);
+        }
+
         if(currentRole === 'Admin') {
           showPage('admin-page');
           initAdminGPS();
+          renderJadwalEditor(res.jadwal);
         } else {
           setGreeting();
           renderTombolAbsen();
           showPage('dashboard-page');
           initCekGPS();
+          // Pastikan jadwal terbaru tetap sinkron saat masuk ke dashboard
+          if (res.jadwal) syncNotificationSchedule(res.jadwal);
         }
       } else {
         alert(res.message || "Gagal masuk. Cek username dan password.");
@@ -522,8 +538,53 @@
         lat: parseFloat(rawLat), 
         lon: parseFloat(rawLon) 
       });
-      
+
       alert(res.message);
+    }
+
+    // ================= FUNGSI JADWAL NOTIFIKASI =================
+    function syncNotificationSchedule(jadwalJson) {
+      if (window.AndroidInterface && jadwalJson) {
+        window.AndroidInterface.updateReminders(jadwalJson);
+        console.log("Jadwal notifikasi disinkronkan ke Android");
+      }
+    }
+
+    function renderJadwalEditor(jadwalJson) {
+      const container = document.getElementById('jadwal-container');
+      const jadwal = JSON.parse(jadwalJson || '{}');
+      const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
+      let html = '';
+      days.forEach((dayName, index) => {
+        const dayNum = (index + 1).toString();
+        const timeData = jadwal[dayNum] ? jadwal[dayNum].split('|') : ["07:00", "15:00"];
+        html += `
+          <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-blue-50">
+            <span class="text-xs font-bold text-gray-600 w-16">${dayName}</span>
+            <input type="time" id="masuk-${dayNum}" value="${timeData[0]}" class="text-xs p-1 border rounded">
+            <span class="text-gray-400">-</span>
+            <input type="time" id="pulang-${dayNum}" value="${timeData[1]}" class="text-xs p-1 border rounded">
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    async function simpanJadwal() {
+      const jadwal = {};
+      for (let i = 1; i <= 6; i++) {
+        const masuk = document.getElementById(`masuk-${i}`).value;
+        const pulang = document.getElementById(`pulang-${i}`).value;
+        jadwal[i.toString()] = `${masuk}|${pulang}`;
+      }
+
+      const jadwalJson = JSON.stringify(jadwal);
+      let res = await callAPI({ action: 'updateJadwal', jadwal: jadwalJson });
+      alert(res.message);
+      if (res.success) {
+        syncNotificationSchedule(jadwalJson);
+      }
     }
 
     // ================= FUNGSI LOKASI & ABSENSI =================
