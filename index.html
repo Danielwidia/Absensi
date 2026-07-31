@@ -22,8 +22,62 @@
     
     @keyframes floatSlow { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-18px) scale(1.03); } 100% { transform: translateY(0px) scale(1); } }
     .animate-float-slow { animation: floatSlow 7s ease-in-out infinite; }
-    .realistic-sun { background: radial-gradient(circle at 30% 30%, #fff700, #ff8800); box-shadow: 0 0 40px 10px rgba(255, 204, 0, 0.4); animation: floatSlow 6s ease-in-out infinite; }
-    .realistic-moon { background: radial-gradient(circle at 35% 35%, #ffffff, #cfd8dc); box-shadow: inset -12px -4px 0px 2px rgba(255,255,255,0.8); animation: floatSlow 8s ease-in-out infinite; }
+    /* Realistic Atmosphere Styles */
+    #theme-decorations { transition: opacity 2s ease-in-out; }
+
+    .sun-glow {
+      position: absolute;
+      width: 150vmax; height: 150vmax;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,220,100,0.4) 0%, rgba(255,150,50,0.1) 30%, transparent 70%);
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .sun-core {
+      position: absolute;
+      width: 120px; height: 120px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 60px 30px #ffcc00, 0 0 120px 60px #ff8800;
+      filter: blur(2px);
+    }
+
+    .moon-core {
+      position: absolute;
+      width: 100px; height: 100px;
+      background: #e1e1e1;
+      border-radius: 50%;
+      box-shadow: inset -15px -5px 0px 5px rgba(0,0,0,0.1), 0 0 40px 10px rgba(255,255,255,0.4);
+      background-image: radial-gradient(circle at 30% 30%, #fff 0%, #d1d1d1 50%, #b1b1b1 100%);
+    }
+
+    .cloud-particle {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.6;
+      animation: drift var(--duration) linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translateX(-10vw); }
+      to { transform: translateX(110vw); }
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--t-duration) ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
   </style>
 </head>
 
@@ -174,7 +228,51 @@
     let currentUser = '', currentRole = '', latSekolah = 0, lonSekolah = 0, isInRadius = false, fotoBase64Data = '', statusSudahMasuk = false, statusSudahPulang = false, statusSudahIzin = false;
 
     async function callAPI(p) { try { let r = await fetch(API_URL, { method: "POST", body: JSON.stringify(p), headers: { "Content-Type": "text/plain;charset=utf-8" } }); return await r.json(); } catch (e) { alert("Koneksi gagal: " + e.message); return { success: false }; } }
-    function setAtmosphere() { const hour = new Date().getHours(); const body = document.getElementById('main-body'); body.className = `min-h-screen font-sans py-10 px-4 transition-colors duration-1000 relative overflow-x-hidden ${hour>=4&&hour<15?'bg-blue-100':hour>=15&&hour<18?'bg-orange-100':'bg-slate-900'}`; }
+    function setAtmosphere() {
+      const hour = new Date().getHours();
+      const body = document.getElementById('main-body');
+      const decor = document.getElementById('theme-decorations');
+      let bgClass = '', decorHtml = '';
+
+      if (hour >= 4 && hour < 11) { // Morning
+        bgClass = 'bg-gradient-to-br from-[#8ec5fc] to-[#e0c3fc]';
+        decorHtml = `
+          <div class="sun-glow" style="top: -20%; left: -20%;"></div>
+          <div class="sun-core" style="top: 10%; left: 10%;"></div>
+          <div class="cloud-particle" style="width: 400px; height: 150px; top: 15%; --duration: 60s; opacity: 0.4;"></div>
+          <div class="cloud-particle" style="width: 300px; height: 100px; top: 30%; --duration: 85s; opacity: 0.3;"></div>
+        `;
+      } else if (hour >= 11 && hour < 15) { // Midday
+        bgClass = 'bg-gradient-to-br from-[#4facfe] to-[#00f2fe]';
+        decorHtml = `
+          <div class="sun-glow" style="top: -50%; left: 20%;"></div>
+          <div class="sun-core" style="top: 5%; left: 50%; transform: translateX(-50%);"></div>
+          <div class="cloud-particle" style="width: 250px; height: 120px; top: 10%; --duration: 40s;"></div>
+          <div class="cloud-particle" style="width: 350px; height: 150px; top: 25%; --duration: 55s; opacity: 0.5;"></div>
+        `;
+      } else if (hour >= 15 && hour < 18) { // Afternoon/Sunset
+        bgClass = 'bg-gradient-to-br from-[#fa709a] to-[#fee140]';
+        decorHtml = `
+          <div class="sun-glow" style="bottom: -20%; left: 30%; background: radial-gradient(circle, rgba(255,100,50,0.5) 0%, transparent 70%);"></div>
+          <div class="sun-core" style="bottom: 10%; left: 10%; background: #ffcc33;"></div>
+          <div class="cloud-particle" style="width: 500px; height: 100px; top: 20%; --duration: 70s; background: #fff5e6; opacity: 0.4;"></div>
+        `;
+      } else { // Night
+        bgClass = 'bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]';
+        let stars = '';
+        for(let i=0; i<40; i++) {
+          let x = Math.random() * 100, y = Math.random() * 100, s = Math.random() * 2 + 1, d = Math.random() * 3 + 2;
+          stars += `<div class="star" style="left: ${x}%; top: ${y}%; width: ${s}px; height: ${s}px; --t-duration: ${d}s;"></div>`;
+        }
+        decorHtml = `
+          ${stars}
+          <div class="moon-core" style="top: 15%; right: 15%;"></div>
+          <div class="sun-glow" style="top: 15%; right: 15%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(200,220,255,0.2) 0%, transparent 70%);"></div>
+        `;
+      }
+      body.className = `min-h-screen font-sans py-10 px-4 transition-colors duration-2000 relative overflow-x-hidden ${bgClass}`;
+      decor.innerHTML = decorHtml;
+    }
     window.onload = function() { setAtmosphere(); const u = localStorage.getItem('dorkas_user'), p = localStorage.getItem('dorkas_pass'); if(u && p) { document.getElementById('log-user').value = u; document.getElementById('log-pass').value = p; document.getElementById('remember-me').checked = true; } };
     function togglePasswordVisibility() { const i = document.getElementById('log-pass'), t = document.getElementById('toggle-icon'); if(i.type === 'password') { i.type = 'text'; t.classList.replace('fa-eye-slash', 'fa-eye'); } else { i.type = 'password'; t.classList.replace('fa-eye', 'fa-eye-slash'); } }
     function showPage(p) { ['login-page', 'register-page', 'dashboard-page', 'admin-page'].forEach(id => document.getElementById(id).classList.toggle('hidden', id !== p)); const c = document.getElementById('app-container'); c.className = p === 'admin-page' ? "max-w-3xl mx-auto p-8 glass-gradient-top rounded-3xl shadow-2xl relative z-10 transition-all" : "max-w-md mx-auto p-8 glass-gradient-top rounded-3xl shadow-2xl relative z-10 transition-all"; }
