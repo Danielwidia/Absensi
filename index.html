@@ -356,6 +356,9 @@
     }
 
     async function doLogin() {
+      // Selalu coba sinkronkan jadwal terbaru setiap kali tombol login ditekan
+      refreshJadwalFromServer();
+
       const user = document.getElementById('log-user').value;
       const pass = document.getElementById('log-pass').value;
       const rememberMe = document.getElementById('remember-me').checked;
