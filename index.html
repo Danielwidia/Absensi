@@ -185,12 +185,17 @@
       if(!u || !p) return alert("Isi data login!");
 
       // Efek Loading
-      const originalHTML = btn.innerHTML;
+      const originalHTML = 'Masuk <i class="fa-solid fa-arrow-right ml-2"></i>';
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memproses...';
       btn.classList.add('opacity-80', 'cursor-not-allowed');
 
       let res = await callAPI({ action: 'login', username: u, password: p });
+
+      // Reset tombol setelah mendapat respon
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+      btn.classList.remove('opacity-80', 'cursor-not-allowed');
 
       if(res.success) {
         if(rem) { localStorage.setItem('dorkas_user', u); localStorage.setItem('dorkas_pass', p); }
@@ -215,10 +220,6 @@
         }
       } else {
         alert(res.message);
-        // Kembalikan tombol jika gagal
-        btn.disabled = false;
-        btn.innerHTML = originalHTML;
-        btn.classList.remove('opacity-80', 'cursor-not-allowed');
       }
     }
 
@@ -282,7 +283,18 @@
     function batalAbsen() { document.getElementById('camera-box').classList.add('hidden'); document.getElementById('tombol-absen-box').classList.remove('hidden'); }
     async function simpanAbsen() { updateGpsUI('loading', 'Menyimpan...'); let res = await callAPI({ action: 'absen', tipe: tipeAbsenSekarang, nama: currentUser, keterangan: 'Hadir', fotoBase64: fotoBase64Data }); alert(res.message); if(res.success) { if(tipeAbsenSekarang==='Masuk') { statusSudahMasuk = true; if(window.AndroidInterface?.markAsClockedIn) window.AndroidInterface.markAsClockedIn(); } else statusSudahPulang = true; renderTombolAbsen(); } batalAbsen(); initCekGPS(); }
     async function kirimIzin() { const k = document.getElementById('ket-izin').value; if(!k) return alert("Isi alasan!"); let res = await callAPI({ action: 'absen', tipe: 'Izin', nama: currentUser, keterangan: k, fotoBase64: null }); alert(res.message); if(res.success) { statusSudahIzin = statusSudahMasuk = statusSudahPulang = true; if(window.AndroidInterface?.markAsClockedIn) window.AndroidInterface.markAsClockedIn(); renderTombolAbsen(); } toggleFormIzin(); }
-    function logout() { localStorage.removeItem('dorkas_user'); localStorage.removeItem('dorkas_pass'); showPage('login-page'); }
+    function logout() {
+      // Reset status tombol login saat logout
+      const btn = document.getElementById('btn-login-submit');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = 'Masuk <i class="fa-solid fa-arrow-right ml-2"></i>';
+        btn.classList.remove('opacity-80', 'cursor-not-allowed');
+      }
+      localStorage.removeItem('dorkas_user');
+      localStorage.removeItem('dorkas_pass');
+      showPage('login-page');
+    }
   </script>
 </body>
 </html>
