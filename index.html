@@ -555,16 +555,27 @@
       const jadwal = JSON.parse(jadwalJson || '{}');
       const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
+      // Fungsi pembantu untuk memastikan format jam adalah HH:mm (dengan nol di depan jika perlu)
+      const fixTimeFormat = (timeStr) => {
+        if (!timeStr || !timeStr.includes(':')) return "07:00";
+        let [h, m] = timeStr.split(':');
+        return `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
+      };
+
       let html = '';
       days.forEach((dayName, index) => {
         const dayNum = (index + 1).toString();
         const timeData = jadwal[dayNum] ? jadwal[dayNum].split('|') : ["07:00", "15:00"];
+
+        const jamMasuk = fixTimeFormat(timeData[0]);
+        const jamPulang = fixTimeFormat(timeData[1]);
+
         html += `
           <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-blue-50">
             <span class="text-xs font-bold text-gray-600 w-16">${dayName}</span>
-            <input type="time" id="masuk-${dayNum}" value="${timeData[0]}" class="text-xs p-1 border rounded">
+            <input type="time" id="masuk-${dayNum}" value="${jamMasuk}" class="text-xs p-1 border rounded">
             <span class="text-gray-400">-</span>
-            <input type="time" id="pulang-${dayNum}" value="${timeData[1]}" class="text-xs p-1 border rounded">
+            <input type="time" id="pulang-${dayNum}" value="${jamPulang}" class="text-xs p-1 border rounded">
           </div>
         `;
       });
