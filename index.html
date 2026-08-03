@@ -172,7 +172,36 @@
           <div id="gps-icon-bg" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0"><i id="gps-icon" class="fa-solid fa-location-crosshairs animate-pulse-fast"></i></div>
           <span id="gps-status" class="text-sm font-semibold text-blue-700 leading-tight">Mencari lokasi GPS Anda...</span>
         </div>
-        <!-- ... (Sisanya kode absen yang sudah ada) ... -->
+
+        <!-- Kamera Native HP -->
+        <div id="camera-box" class="mb-6 hidden animate-fade-in">
+          <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-2xl p-6 text-center mb-3">
+            <p class="text-sm font-semibold text-indigo-800 mb-3" id="kamera-instruksi">Silakan ambil foto selfie Anda</p>
+            <input type="file" id="foto-input" accept="image/*" capture="user" class="hidden" onchange="previewFoto(event)">
+            <label for="foto-input" class="cursor-pointer inline-flex items-center gap-2 bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md"><i class="fa-solid fa-camera"></i> Buka Kamera HP</label>
+            <img id="foto-preview" class="mt-4 mx-auto max-h-56 rounded-xl shadow-md hidden" src="" alt="Preview">
+          </div>
+          <button id="btn-snap" onclick="simpanAbsen()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold p-4 rounded-xl shadow-lg hidden flex items-center justify-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-xl"></i> Simpan Absen & Foto</button>
+          <button onclick="batalAbsen()" class="w-full mt-3 bg-white border border-gray-300 text-gray-700 font-bold p-3 rounded-xl hover:bg-gray-50">Batal Absen</button>
+        </div>
+
+        <!-- Tombol Absen -->
+        <div id="tombol-absen-box" class="grid grid-cols-2 gap-3 mb-6">
+          <button id="btn-masuk" class="flex items-center justify-center gap-2 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm transition-all"></button>
+          <button id="btn-pulang" class="flex items-center justify-center gap-2 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm transition-all"></button>
+        </div>
+
+        <!-- Form Izin Dropdown -->
+        <div class="bg-gray-50/90 rounded-2xl border border-gray-100 mb-6 overflow-hidden shadow-sm">
+          <button onclick="toggleFormIzin()" class="w-full p-4 flex items-center justify-between bg-gray-100/90 text-gray-700 font-bold text-sm">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-envelope-open-text text-gray-500"></i> Form Izin</span>
+            <i id="izin-icon" class="fa-solid fa-chevron-down transition-transform"></i>
+          </button>
+          <div id="izin-content" class="p-5 hidden border-t border-gray-100 bg-white/95 space-y-3">
+            <input type="text" id="ket-izin" placeholder="Alasan (Sakit / Keperluan lain)" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm shadow-sm">
+            <button id="btn-izin" onclick="kirimIzin()" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl shadow-md transition-all"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin</button>
+          </div>
+        </div>
       </div>
 
       <!-- NILAI SECTION -->
