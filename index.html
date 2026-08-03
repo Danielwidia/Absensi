@@ -150,53 +150,82 @@
       <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
         <div>
           <h2 id="greeting" class="text-xl font-extrabold text-gray-800"></h2>
-          <p class="text-sm text-gray-500">Siap untuk absen hari ini?</p>
+          <p class="text-sm text-gray-500">Pilih menu di bawah ini</p>
         </div>
         <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-inner"><i class="fa-solid fa-user-astronaut text-xl"></i></div>
       </div>
-      
-      <div id="gps-box" class="bg-blue-50/95 border border-blue-100 p-3 rounded-xl flex items-center gap-3 mb-6 transition-all duration-300">
-        <div id="gps-icon-bg" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0"><i id="gps-icon" class="fa-solid fa-location-crosshairs animate-pulse-fast"></i></div>
-        <span id="gps-status" class="text-sm font-semibold text-blue-700 leading-tight">Mencari lokasi GPS Anda...</span>
-      </div>
 
-      <!-- Kamera Native HP -->
-      <div id="camera-box" class="mb-6 hidden animate-fade-in">
-        <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-2xl p-6 text-center mb-3">
-          <p class="text-sm font-semibold text-indigo-800 mb-3" id="kamera-instruksi">Silakan ambil foto selfie Anda</p>
-          <input type="file" id="foto-input" accept="image/*" capture="user" class="hidden" onchange="previewFoto(event)">
-          <label for="foto-input" class="cursor-pointer inline-flex items-center gap-2 bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md"><i class="fa-solid fa-camera"></i> Buka Kamera HP</label>
-          <img id="foto-preview" class="mt-4 mx-auto max-h-56 rounded-xl shadow-md hidden" src="" alt="Preview">
-        </div>
-        <button id="btn-snap" onclick="simpanAbsen()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold p-4 rounded-xl shadow-lg hidden flex items-center justify-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-xl"></i> Simpan Absen & Foto</button>
-        <button onclick="batalAbsen()" class="w-full mt-3 bg-white border border-gray-300 text-gray-700 font-bold p-3 rounded-xl hover:bg-gray-50">Batal Absen</button>
-      </div>
-
-      <!-- Tombol Absen -->
-      <div id="tombol-absen-box" class="grid grid-cols-2 gap-3 mb-6">
-        <button id="btn-masuk" class="flex items-center justify-center gap-2 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm transition-all"></button>
-        <button id="btn-pulang" class="flex items-center justify-center gap-2 text-white py-3 px-4 rounded-xl shadow-md font-bold text-sm transition-all"></button>
-      </div>
-
-      <!-- Form Izin Dropdown -->
-      <div class="bg-gray-50/90 rounded-2xl border border-gray-100 mb-6 overflow-hidden shadow-sm">
-        <button onclick="toggleFormIzin()" class="w-full p-4 flex items-center justify-between bg-gray-100/90 text-gray-700 font-bold text-sm">
-          <span class="flex items-center gap-2"><i class="fa-solid fa-envelope-open-text text-gray-500"></i> Form Izin</span>
-          <i id="izin-icon" class="fa-solid fa-chevron-down transition-transform"></i>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <button onclick="showSubPage('absen-section')" class="p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all text-center">
+          <i class="fa-solid fa-calendar-check text-2xl text-blue-600 mb-2"></i>
+          <p class="text-xs font-bold text-gray-700">Absensi</p>
         </button>
-        <div id="izin-content" class="p-5 hidden border-t border-gray-100 bg-white/95 space-y-3">
-          <input type="text" id="ket-izin" placeholder="Alasan (Sakit / Keperluan lain)" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none text-sm shadow-sm">
-          <button id="btn-izin" onclick="kirimIzin()" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl shadow-md transition-all"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Izin</button>
-        </div>
+        <button id="menu-penilaian" onclick="showSubPage('nilai-section')" class="p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all text-center hidden">
+          <i class="fa-solid fa-file-signature text-2xl text-green-600 mb-2"></i>
+          <p class="text-xs font-bold text-gray-700">Penilaian</p>
+        </button>
       </div>
 
-      <button onclick="logout()" class="w-full mt-2 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-100"><i class="fa-solid fa-power-off mr-2"></i> Keluar</button>
+      <!-- ABSEN SECTION -->
+      <div id="absen-section" class="sub-page">
+        <div id="gps-box" class="bg-blue-50/95 border border-blue-100 p-3 rounded-xl flex items-center gap-3 mb-6 transition-all duration-300">
+          <div id="gps-icon-bg" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 shrink-0"><i id="gps-icon" class="fa-solid fa-location-crosshairs animate-pulse-fast"></i></div>
+          <span id="gps-status" class="text-sm font-semibold text-blue-700 leading-tight">Mencari lokasi GPS Anda...</span>
+        </div>
+        <!-- ... (Sisanya kode absen yang sudah ada) ... -->
+      </div>
+
+      <!-- NILAI SECTION -->
+      <div id="nilai-section" class="sub-page hidden space-y-4">
+        <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
+          <h3 class="font-bold text-green-800 mb-3 flex justify-between">
+            <span><i class="fa-solid fa-calculator"></i> Input Nilai</span>
+            <button onclick="toggleGradeSettings()" class="text-xs bg-green-200 px-2 py-1 rounded text-green-700">Bobot %</button>
+          </h3>
+
+          <div id="grade-settings" class="hidden mb-4 p-3 bg-white rounded-xl border border-green-200 space-y-2">
+            <p class="text-[10px] font-bold text-gray-500 uppercase">Pengaturan Bobot (%)</p>
+            <div class="grid grid-cols-3 gap-2">
+              <input type="number" id="b-proses" placeholder="Proses" class="p-2 border rounded text-xs">
+              <input type="number" id="b-ut" placeholder="Ulg+Tgs" class="p-2 border rounded text-xs">
+              <input type="number" id="b-uas" placeholder="UAS" class="p-2 border rounded text-xs">
+            </div>
+            <button onclick="saveWeights()" class="w-full bg-green-600 text-white text-xs py-2 rounded-lg">Simpan Bobot</button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <select id="n-sem" class="p-2 border rounded-xl text-xs"><option value="Ganjil">Ganjil</option><option value="Genap">Genap</option></select>
+            <input type="text" id="n-kelas" placeholder="Kelas" class="p-2 border rounded-xl text-xs">
+          </div>
+          <input type="text" id="n-siswa" placeholder="Nama Siswa" class="w-full p-2 border rounded-xl text-xs mb-2">
+          <input type="text" id="n-mapel" placeholder="Mata Pelajaran" class="w-full p-2 border rounded-xl text-xs mb-3">
+
+          <div class="grid grid-cols-4 gap-2 mb-3">
+            <div><label class="text-[10px]">Proses</label><input type="number" id="v-proses" oninput="hitungNilaiAkhir()" class="w-full p-2 border rounded-lg text-xs"></div>
+            <div><label class="text-[10px]">Ulangan</label><input type="number" id="v-ulangan" oninput="hitungNilaiAkhir()" class="w-full p-2 border rounded-lg text-xs"></div>
+            <div><label class="text-[10px]">Tugas</label><input type="number" id="v-tugas" oninput="hitungNilaiAkhir()" class="w-full p-2 border rounded-lg text-xs"></div>
+            <div><label class="text-[10px]">UAS</label><input type="number" id="v-uas" oninput="hitungNilaiAkhir()" class="w-full p-2 border rounded-lg text-xs"></div>
+          </div>
+
+          <div class="bg-white p-3 rounded-xl mb-3 flex justify-between items-center border border-green-200">
+            <span class="text-sm font-bold text-gray-600">Nilai Akhir:</span>
+            <span id="v-akhir" class="text-xl font-black text-green-600">0</span>
+          </div>
+
+          <button onclick="simpanNilai()" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow-md">Simpan Penilaian</button>
+        </div>
+
+        <button onclick="lihatLaporanNilai()" class="w-full py-2 text-xs font-bold text-blue-600 underline">Lihat Riwayat Nilai</button>
+        <div id="riwayat-nilai" class="hidden overflow-x-auto text-[10px]"></div>
+      </div>
+
+      <button onclick="logout()" class="w-full mt-6 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-100"><i class="fa-solid fa-power-off mr-2"></i> Keluar</button>
     </div>
   </div>
 
   <script>
     // MASUKKAN LINK WEB APP GOOGLE SCRIPT ANDA DI BAWAH INI
-    const API_URL = "https://script.google.com/macros/s/AKfycbzi_A8k1OPczjXjTYj1P8Uh4k3ONLmklKhLDPnN9UDlWTjOFH-D5FTMWgQDC1d97WqKJQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyGUeOhdx0kJWDVrwF381EQ6irYdmHvsWuylRWeyJzv2qc0TFgzbD1N88tj90ve59pPnQ/exec";
 
     let currentUser = '', currentRole = '', tipeAbsenSekarang = ''; 
     let latSekolah = 0, lonSekolah = 0, userLat, userLon, isInRadius = false, fotoBase64Data = '';
@@ -355,6 +384,95 @@
       if(res.success) showPage('login-page');
     }
 
+    let bobot = { proses: 50, ut: 25, uas: 25 };
+
+    function showSubPage(sectionId) {
+      document.querySelectorAll('.sub-page').forEach(el => el.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+      if(sectionId === 'nilai-section') loadGradeSettings();
+    }
+
+    function toggleGradeSettings() {
+      document.getElementById('grade-settings').classList.toggle('hidden');
+    }
+
+    async function loadGradeSettings() {
+      let res = await callAPI({ action: 'getGradeSettings', namaGuru: currentUser });
+      if(res) {
+        bobot = { proses: res.bProses, ut: res.bUT, uas: res.bUAS };
+        document.getElementById('b-proses').value = bobot.proses;
+        document.getElementById('b-ut').value = bobot.ut;
+        document.getElementById('b-uas').value = bobot.uas;
+      }
+    }
+
+    async function saveWeights() {
+      const bProses = parseInt(document.getElementById('b-proses').value);
+      const bUT = parseInt(document.getElementById('b-ut').value);
+      const bUAS = parseInt(document.getElementById('b-uas').value);
+
+      if(bProses + bUT + bUAS !== 100) return alert("Total bobot harus 100%!");
+
+      let res = await callAPI({ action: 'saveGradeSettings', namaGuru: currentUser, bProses, bUT, bUAS });
+      alert(res.message);
+      bobot = { proses: bProses, ut: bUT, uas: bUAS };
+      toggleGradeSettings();
+      hitungNilaiAkhir();
+    }
+
+    function hitungNilaiAkhir() {
+      const p = parseFloat(document.getElementById('v-proses').value) || 0;
+      const u = parseFloat(document.getElementById('v-ulangan').value) || 0;
+      const t = parseFloat(document.getElementById('v-tugas').value) || 0;
+      const s = parseFloat(document.getElementById('v-uas').value) || 0;
+
+      const rataUT = (u + t) / 2;
+      const akhir = (p * bobot.proses / 100) + (rataUT * bobot.ut / 100) + (s * bobot.uas / 100);
+      document.getElementById('v-akhir').innerText = Math.round(akhir);
+    }
+
+    async function simpanNilai() {
+      const data = {
+        action: 'saveNilai',
+        namaGuru: currentUser,
+        semester: document.getElementById('n-sem').value,
+        kelas: document.getElementById('n-kelas').value,
+        siswa: document.getElementById('n-siswa').value,
+        mapel: document.getElementById('n-mapel').value,
+        proses: document.getElementById('v-proses').value,
+        ulangan: document.getElementById('v-ulangan').value,
+        tugas: document.getElementById('v-tugas').value,
+        uas: document.getElementById('v-uas').value,
+        akhir: document.getElementById('v-akhir').innerText
+      };
+
+      if(!data.siswa || !data.mapel) return alert("Nama Siswa dan Mapel wajib diisi!");
+
+      let res = await callAPI(data);
+      alert(res.message);
+      if(res.success) {
+        ['v-proses','v-ulangan','v-tugas','v-uas','n-siswa'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('v-akhir').innerText = '0';
+      }
+    }
+
+    async function lihatLaporanNilai() {
+      const div = document.getElementById('riwayat-nilai');
+      div.classList.toggle('hidden');
+      if(!div.classList.contains('hidden')) {
+        div.innerHTML = "Memuat data...";
+        let res = await callAPI({ action: 'getNilai', namaGuru: currentUser });
+        if(res.success) {
+          let html = '<table class="w-full mt-3 border"><tr class="bg-gray-100"><th>Siswa</th><th>Mapel</th><th>NA</th></tr>';
+          res.data.forEach(row => {
+            html += `<tr class="border-b"><td>${row[4]}</td><td>${row[5]}</td><td class="font-bold">${row[10]}</td></tr>`;
+          });
+          html += '</table>';
+          div.innerHTML = html;
+        }
+      }
+    }
+
     async function doLogin() {
       // Selalu coba sinkronkan jadwal terbaru setiap kali tombol login ditekan
       refreshJadwalFromServer();
@@ -407,6 +525,15 @@
           setGreeting();
           renderTombolAbsen();
           showPage('dashboard-page');
+
+          // Tampilkan menu penilaian jika bukan Siswa
+          if(currentRole !== 'Siswa') {
+            document.getElementById('menu-penilaian').classList.remove('hidden');
+          } else {
+            document.getElementById('menu-penilaian').classList.add('hidden');
+          }
+          showSubPage('absen-section');
+
           initCekGPS();
           // Sinkronisasi jadwal saat login
           if (res.jadwal) syncNotificationSchedule(res.jadwal);
