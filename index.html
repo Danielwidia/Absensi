@@ -218,11 +218,16 @@ async function callAPI(payload, retries = 3) {
           });
 
           if (!response.ok) {
-            // Jika error 404 (atau error server lain) dan masih ada sisa percobaan, ulangi
+            // Jika gagal dan masih ada sisa percobaan, ulangi
             if (i < retries - 1) {
-              console.warn(`[Retry ${i+1}/${retries}] Google merespon ${response.status}. Mencoba ulang dalam 1 detik...`);
-              await new Promise(resolve => setTimeout(resolve, 1000)); // Jeda 1 detik
-              continue; // Ulangi proses fetch
+              console.warn(`[Retry ${i+1}/${retries}] Google merespon ${response.status}. Mencoba ulang...`);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              continue; 
+            }
+            
+            // JIKA TETAP GAGAL DI PERCOBAAN TERAKHIR DAN STATUSNYA 404
+            if (response.status === 404) {
+              throw new Error("Maaf, server sedang sibuk. Silakan coba beberapa saat lagi.");
             }
             throw new Error("Server merespon dengan status: " + response.status);
           }
@@ -232,18 +237,19 @@ async function callAPI(payload, retries = 3) {
             return JSON.parse(text);
           } catch (e) {
             console.error("Gagal parsing JSON. Respon server:", text);
+            // Tangkap juga error jika server Google overload dan malah mengirim halaman HTML
             if (text.includes("<!DOCTYPE") || text.includes("<html")) {
-              throw new Error("Sesi berakhir atau server sibuk (HTML response). Silakan coba lagi.");
+              throw new Error("Maaf, server sedang sibuk. Silakan coba beberapa saat lagi.");
             }
             throw new Error("Format data dari server tidak valid.");
           }
         } catch (err) {
-          // Jika ini adalah percobaan terakhir, hentikan dan lemparkan pesan error
+          // Jika ini adalah percobaan terakhir, kembalikan pesan error kustom tersebut
           if (i === retries - 1) {
             console.error("Detail Error:", err);
-            return { success: false, message: "Gagal menghubungi server setelah " + retries + " percobaan. " + err.message };
+            return { success: false, message: err.message };
           }
-          // Jika error jaringan (misal terputus), tunggu 1.5 detik lalu coba lagi
+          // Jeda sebelum mencoba ulang jika terjadi error jaringan
           await new Promise(resolve => setTimeout(resolve, 1500));
         }
       }
