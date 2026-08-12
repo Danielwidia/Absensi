@@ -246,20 +246,25 @@
       const body = document.getElementById('main-body');
       const decor = document.getElementById('theme-decorations');
       let bgClass = '', decorHtml = '';
-
+    
       if (hour >= 4 && hour < 11) {
+        // Pagi: Matahari di kiri, dinaikkan ke top-4
         bgClass = 'bg-gradient-to-br from-sky-200 via-blue-200 to-indigo-200';
-        decorHtml = `<div class="absolute top-10 left-12 w-20 h-20 rounded-full realistic-sun"></div><div class="absolute top-16 right-16 w-36 h-12 realistic-cloud animate-cloud opacity-80"></div><div class="absolute top-36 left-28 w-24 h-8 realistic-cloud animate-cloud opacity-60" style="animation-delay: 4s;"></div>`;
+        decorHtml = `<div class="absolute top-4 left-12 w-20 h-20 rounded-full realistic-sun"></div><div class="absolute top-16 right-16 w-36 h-12 realistic-cloud animate-cloud opacity-80"></div><div class="absolute top-36 left-28 w-24 h-8 realistic-cloud animate-cloud opacity-60" style="animation-delay: 4s;"></div>`;
       } else if (hour >= 11 && hour < 15) {
+        // Siang: Matahari di kanan atas, dinaikkan ke top-4
         bgClass = 'bg-gradient-to-br from-blue-300 via-sky-300 to-cyan-300';
-        decorHtml = `<div class="absolute top-8 right-16 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-12 left-10 w-40 h-14 realistic-cloud animate-cloud opacity-90"></div><div class="absolute top-48 right-8 w-32 h-10 realistic-cloud animate-cloud opacity-70" style="animation-delay: 3s;"></div>`;
+        decorHtml = `<div class="absolute top-4 right-16 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-12 left-10 w-40 h-14 realistic-cloud animate-cloud opacity-90"></div><div class="absolute top-48 right-8 w-32 h-10 realistic-cloud animate-cloud opacity-70" style="animation-delay: 3s;"></div>`;
       } else if (hour >= 15 && hour < 18) {
+        // Sore: Matahari di kanan, dinaikkan ke top-4
         bgClass = 'bg-gradient-to-br from-orange-200 via-amber-300 to-rose-300';
-        decorHtml = `<div class="absolute top-12 right-10 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-28 left-16 w-44 h-14 realistic-cloud animate-cloud opacity-60"></div>`;
+        decorHtml = `<div class="absolute top-4 right-10 w-24 h-24 rounded-full realistic-sun"></div><div class="absolute top-28 left-16 w-44 h-14 realistic-cloud animate-cloud opacity-60"></div>`;
       } else {
+        // Malam: Bulan di kanan, dinaikkan ke top-4
         bgClass = 'bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950';
-        decorHtml = `<div class="absolute top-10 right-16 w-20 h-20 rounded-full realistic-moon"></div><div class="absolute top-12 left-12 w-1.5 h-1.5 bg-white rounded-full realistic-star"></div><div class="absolute top-24 left-36 w-2 h-2 bg-white rounded-full realistic-star" style="animation-delay: 1s;"></div><div class="absolute top-8 left-60 w-1.5 h-1.5 bg-white rounded-full realistic-star" style="animation-delay: 2s;"></div>`;
+        decorHtml = `<div class="absolute top-4 right-16 w-20 h-20 rounded-full realistic-moon"></div><div class="absolute top-12 left-12 w-1.5 h-1.5 bg-white rounded-full realistic-star"></div><div class="absolute top-24 left-36 w-2 h-2 bg-white rounded-full realistic-star" style="animation-delay: 1s;"></div><div class="absolute top-8 left-60 w-1.5 h-1.5 bg-white rounded-full realistic-star" style="animation-delay: 2s;"></div>`;
       }
+      
       body.className = `min-h-screen font-sans py-10 px-4 transition-colors duration-1000 relative overflow-x-hidden ${bgClass}`;
       decor.innerHTML = decorHtml;
     }
