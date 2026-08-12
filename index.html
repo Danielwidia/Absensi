@@ -207,32 +207,45 @@
     let statusSudahPulang = false;
     let statusSudahIzin = false;
 
-    async function callAPI(payload) {
-      try {
-        let response = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "text/plain;charset=utf-8" }
-        });
-
-        if (!response.ok) {
-          throw new Error("Server merespon dengan status: " + response.status);
-        }
-
-        const text = await response.text();
+async function callAPI(payload, retries = 3) {
+      for (let i = 0; i < retries; i++) {
         try {
-          return JSON.parse(text);
-        } catch (e) {
-          console.error("Gagal parsing JSON. Respon server:", text);
-          if (text.includes("<!DOCTYPE") || text.includes("<html")) {
-            throw new Error("Sesi berakhir atau server sibuk (HTML response). Silakan coba lagi.");
+          let response = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            redirect: "follow" // Memastikan browser mengikuti redirect Google
+          });
+
+          if (!response.ok) {
+            // Jika error 404 (atau error server lain) dan masih ada sisa percobaan, ulangi
+            if (i < retries - 1) {
+              console.warn(`[Retry ${i+1}/${retries}] Google merespon ${response.status}. Mencoba ulang dalam 1 detik...`);
+              await new Promise(resolve => setTimeout(resolve, 1000)); // Jeda 1 detik
+              continue; // Ulangi proses fetch
+            }
+            throw new Error("Server merespon dengan status: " + response.status);
           }
-          throw new Error("Format data dari server tidak valid.");
+
+          const text = await response.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            console.error("Gagal parsing JSON. Respon server:", text);
+            if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+              throw new Error("Sesi berakhir atau server sibuk (HTML response). Silakan coba lagi.");
+            }
+            throw new Error("Format data dari server tidak valid.");
+          }
+        } catch (err) {
+          // Jika ini adalah percobaan terakhir, hentikan dan lemparkan pesan error
+          if (i === retries - 1) {
+            console.error("Detail Error:", err);
+            return { success: false, message: "Gagal menghubungi server setelah " + retries + " percobaan. " + err.message };
+          }
+          // Jika error jaringan (misal terputus), tunggu 1.5 detik lalu coba lagi
+          await new Promise(resolve => setTimeout(resolve, 1500));
         }
-      } catch (err) {
-        console.error("Detail Error:", err);
-        alert("Terjadi Kendala: " + err.message);
-        return { success: false, message: err.message };
       }
     }
 
